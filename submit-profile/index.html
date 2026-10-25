@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create Your League Chef Profile | Global Chef League</title>
+<meta name="description" content="Submit your League Chef profile to Global Chef League.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://globalchefleague.com/submit-profile/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Global Chef League">
+<meta property="og:title" content="Create Your League Chef Profile | Global Chef League">
+<meta property="og:description" content="Submit your League Chef profile to Global Chef League.">
+<meta property="og:url" content="https://globalchefleague.com/submit-profile/">
+<meta name="theme-color" content="#0F1E3C">
+<link rel="icon" href="../assets/img/gcl-icon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/montserrat-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../" aria-label="Global Chef League home"><img src="../assets/img/gcl-logo-horizontal.svg" alt="Global Chef League" width="285" height="28"></a>
+    <button class="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Menu"><span></span><span></span><span></span></button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <a class="nav-link" href="../chefs/">Find a Chef</a><a class="nav-link" href="../competitions/">Competitions</a><a class="nav-link" href="../membership/">Membership</a><a class="nav-link" href="../about/">About</a>
+      <a class="btn btn--primary btn--sm" href="../membership/">Join Now</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<section class="bg-navy page-hero">
+  <div class="wrap submit-head">
+    <h1 class="h1 h1--sm">Create Your League Chef Profile<span class="dot">.</span></h1>
+    <div class="stack" style="gap:14px">
+      <p>Tell us about yourself, your culinary background, and the services you offer.</p>
+      <p>Your profile will give potential customers a place to discover your work, see your rates, and contact you directly.</p>
+      <p>Once submitted, our team will review your information and publish your profile after confirming your active membership.</p>
+    </div>
+  </div>
+</section>
+<section class="section--md">
+  <div class="wrap submit-cols">
+    <nav class="sec-index" aria-label="Form sections"><a href="#basics"><span class="num">01</span><span class="t">The Basics</span></a><a href="#cooking"><span class="num">02</span><span class="t">Your Cooking</span></a><a href="#rates"><span class="num">03</span><span class="t">Rates &amp; Contact</span></a></nav>
+    <form action="https://formspree.io/f/REPLACE_PROFILE_FORM_ID" method="POST" enctype="multipart/form-data" data-ajax data-success="Profile submitted! We'll verify your membership and email you when your profile is live.">
+      <input type="hidden" name="_subject" value="GCL website — new League Chef profile">
+      <input type="text" name="_gotcha" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="fsec" id="basics">
+        <div class="fsec-title"><span class="num">01</span> The Basics</div>
+        <div class="basics">
+          <div class="field"><span class="flabel">Profile photo <span class="req">*</span></span>
+            <label class="upload"><input type="file" id="photo" name="photo" accept="image/*" required><span class="plus">+</span><span class="label">Upload profile photo</span><span class="hint">JPG or PNG, portrait, at least 800px wide</span></label>
+          </div>
+          <div class="form-grid" style="align-content:start">
+            <div class="field"><label for="p-name">Chef name <span class="req">*</span></label><input class="input" id="p-name" name="chef_name" type="text" required autocomplete="name"></div>
+            <div class="field"><label for="p-email-private">Your email (private) <span class="req">*</span></label><input class="input" id="p-email-private" name="account_email" type="email" required autocomplete="email"></div>
+            <div class="field"><label for="p-city">City <span class="req">*</span></label><input class="input" id="p-city" name="city" type="text" required ></div>
+            <div class="field"><label for="p-state">State/Region</label><input class="input" id="p-state" name="state_region" type="text" ></div>
+            <div class="field"><label for="p-country">Country <span class="req">*</span></label><select class="select" id="p-country" name="country" required><option value="">Select country</option><option>United States</option><option>Canada</option><option>Mexico</option><option>United Kingdom</option><option>Other</option></select></div>
+            <div class="field"><span class="flabel">League designation</span><div class="desig"><span class="badge badge--outline">League Chef</span><span class="hint">Assigned on approval</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="fsec" id="cooking">
+        <div class="fsec-title"><span class="num">02</span> Your Cooking</div>
+        <div class="field"><label for="p-bio">Biography <span class="req">*</span></label><textarea class="textarea" id="p-bio" name="biography" rows="5" required></textarea><span class="hint">Professional background, culinary experience, and specialties.</span></div>
+        <div class="field"><span class="flabel">Services offered <span class="req">*</span></span><div class="checks" data-require-one><label class="check"><input type="checkbox" name="services[]" value="Private dining"> Private dining</label><label class="check"><input type="checkbox" name="services[]" value="Catering and special events"> Catering and special events</label><label class="check"><input type="checkbox" name="services[]" value="Cooking classes"> Cooking classes</label><label class="check"><input type="checkbox" name="services[]" value="Corporate events"> Corporate events</label><label class="check"><input type="checkbox" name="services[]" value="Culinary experiences"> Culinary experiences</label></div></div>
+        <div class="field"><label for="p-spec">Culinary specialties <span class="req">*</span></label><input class="input" id="p-spec" name="specialties" type="text" required placeholder="e.g. Latin Caribbean, Live-fire, Seafood" ></div>
+      </div>
+      <div class="fsec" id="rates">
+        <div class="fsec-title"><span class="num">03</span> Rates &amp; Contact</div>
+        <div class="form-grid">
+          <div class="field"><label for="p-rate">Starting rates</label><input class="input" id="p-rate" name="starting_rates" type="text" placeholder="From $85/guest or Contact for Pricing" ></div>
+          <div class="field"><label for="p-area">Service area</label><input class="input" id="p-area" name="service_area" type="text" ></div>
+          <div class="field"><label for="p-pemail">Public contact email</label><input class="input" id="p-pemail" name="public_email" type="email" data-contact-method></div>
+          <div class="field"><label for="p-phone">Public phone</label><input class="input" id="p-phone" name="public_phone" type="tel" data-contact-method></div>
+          <div class="field"><label for="p-web">Website</label><input class="input" id="p-web" name="website" type="url" placeholder="https://" ></div>
+          <div class="field"><label for="p-book">Booking link</label><input class="input" id="p-book" name="booking_link" type="url" placeholder="https://" data-contact-method></div>
+          <div class="field span2"><label for="p-social">Social media</label><input class="input" id="p-social" name="social_media" placeholder="Instagram, TikTok, Facebook URLs"></div>
+        </div>
+        <p class="hint">At least one public contact method or booking link is required for publication.</p>
+      </div>
+      <div class="submit-bar">
+        <label class="check"><input type="checkbox" name="permission" value="yes" required> Only include photos and contact information that you have permission to publish.</label>
+        <div class="form-msg" aria-live="polite" style="width:100%"></div>
+        <button class="btn btn--primary btn--lg" type="submit">Submit My Profile</button>
+      </div>
+    </form>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><img src="../assets/img/gcl-logo-stacked-white.svg" alt="Global Chef League" width="115" height="96"><p class="foot-tag">Compete. Get Discovered. Get Booked.</p></div>
+      <div class="foot-col"><div class="eyebrow">Explore</div><a href="../chefs/">Find a Chef</a><a href="../competitions/">Competitions</a><a href="../membership/">Membership</a><a href="../about/">About</a><a href="../contact/">Contact</a></div>
+      <div class="foot-col"><div class="eyebrow">Legal</div><a href="../membership-terms/">Membership Terms</a><a href="../privacy/">Privacy Policy</a><a href="../terms/">Website Terms</a><a href="../directory-disclaimer/">Directory Disclaimer</a></div>
+      <div class="foot-col"><div class="eyebrow">The League</div><a href="../competitions/">Chef Battle</a><a href="../competitions/#world-chef-cup">World Chef Cup</a><span>ChefCon</span></div>
+    </div>
+    <div class="foot-bottom"><span>© <span id="year">2026</span> Global Chef League</span><span>GlobalChefLeague.com</span></div>
+  </div>
+</footer>
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>
