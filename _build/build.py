@@ -19,10 +19,11 @@ from pathlib import Path
 # 1. SETTINGS — change these
 # ============================================================
 SITE_URL      = "https://globalchefleague.com"    # used for canonical links + sitemap
-STRIPE_LINK   = "https://buy.stripe.com/REPLACE_WITH_YOUR_PAYMENT_LINK"
+STRIPE_LINK   = "https://buy.stripe.com/aFa4gB5Kd0nX3OP5Y89ws02"
+LANDING_MODE  = True   # True = recruitment landing page only (pre-launch). False = full 9-page site.
 FORM_CONTACT  = "https://formspree.io/f/REPLACE_CONTACT_FORM_ID"
 FORM_PROFILE  = "https://formspree.io/f/REPLACE_PROFILE_FORM_ID"
-CONTACT_EMAIL = "hello@globalchefleague.com"
+CONTACT_EMAIL = "chefbattle@hoptoit.events"
 BASE_PATH     = "/"   # site root path. "/" for a custom domain (globalchefleague.com).
                       # For a github.io project URL use "/REPO-NAME/". Only the 404 page uses this.
 YEAR          = "2026"
@@ -97,13 +98,13 @@ PILLARS = [
     ("02", "Get Discovered", "Create your own League Chef profile to showcase your experience, specialties, and culinary services."),
     ("03", "Get Booked", "Promote your rates and contact information so customers can reach you directly. No booking commissions or middlemen."),
 ]
-PATH = [("01", "Compete locally", "Chef Battle city events", ""), ("02", "Advance regionally", "Chef Battle regional showdowns", ""), ("03", "Qualify for the world championship", "World Chef Cup", "gold")]
+PATH = [("01", "Compete locally", "Chef Battle city events", ""), ("02", "Advance regionally", "Chef Battle regional showdowns", ""), ("03", "Qualify for the World Battle", "World Chef Cup", "gold")]
 INCLUDES = [
     ("01", "Compete in Chef Battle", "Apply to compete in official Chef Battle events around the world without additional competition entry fees. Competition spots are limited and selection is not guaranteed."),
     ("02", "Get Your Own League Chef Profile", "Showcase your experience, photos, specialties, and culinary services on your own public profile."),
     ("03", "Promote Your Services", "List your rates and contact information for private dining, catering, cooking classes, and more."),
     ("04", "Keep What You Earn", "Customers contact and book you directly. Global Chef League doesn't take a commission."),
-    ("05", "Work Toward the World Chef Cup", "Compete for recognition and the opportunity to qualify for the international championship."),
+    ("05", "Work Toward the World Chef Cup", "Compete for recognition and the opportunity to qualify for the World Battle."),
     ("06", "Stay Connected", "Get updates about upcoming competitions, league news, and opportunities for League Chefs."),
 ]
 GLANCE = [("Annual membership", "$25/year", True), ("Membership title", "League Chef", False), ("Chef Battle entry fees", "Free for active members", True),
@@ -149,8 +150,21 @@ def chef_badges(c, on_navy=False):
     labels = [c["primary_role"]] + c["achievements"]
     return '<div class="badges">' + "".join(badge(l, on_navy) for l in labels) + "</div>"
 
-def ph(label, light=False, extra=""):
-    return f'<div class="ph{" ph--light" if light else ""}" {extra}>{e(label)}</div>'
+# Placeholder photos (free Unsplash License, loaded from Unsplash's CDN). Replace before launch.
+UNSPLASH = "https://images.unsplash.com/{id}?auto=format&fit=crop&w={w}&q=70"
+PHOTOS = {
+    "profile":   "photo-1697898109582-40f15c65f174",   # chef in chef's hat holding a plated dish
+    "dish":      "photo-1467003909585-2f8a72700288",   # salmon fillet with salsa
+    "event1":    "photo-1555244162-803834f70033",      # catering buffet with chafing dishes
+    "event2":    "photo-1503453776591-b4548af666a2",   # chef garnishing a dish
+}
+
+def ph(label, light=False, extra="", photo=None, w=900, pos="center"):
+    img = ""
+    if photo and PHOTOS.get(photo):
+        src = UNSPLASH.format(id=PHOTOS[photo], w=w)
+        img = f'<img src="{src}" alt="{e(label)}" loading="lazy" style="object-position:{pos}">'
+    return f'<div class="ph{" ph--light" if light else ""}" {extra}>{e(label)}{img}</div>'
 
 def head_block(title, rule_cls="rule", eyebrow=None, h="h2", hcls="h2", extra=""):
     eb = f'<div class="eyebrow">{e(eyebrow)}</div>' if eyebrow else ""
@@ -163,6 +177,7 @@ def btn(label, href, kind="primary", size="", block=False, attrs=""):
 NAV = [("Find a Chef", "chefs/"), ("Competitions", "competitions/"), ("Membership", "membership/"), ("About", "about/")]
 
 def page(path, title, desc, body, active=None, noindex=False):
+    minimal = LANDING_MODE
     depth = path.count("/")  # "chefs/maria-santos/index.html" -> 2
     r = BASE_PATH if path == "404.html" else "../" * depth
     links = "".join(
@@ -171,6 +186,45 @@ def page(path, title, desc, body, active=None, noindex=False):
     full_title = title if title.startswith("Global Chef League") else f"{title} | Global Chef League"
     robots = '<meta name="robots" content="noindex">' if noindex else ""
     body = body.replace("{R}", r)
+    if minimal:
+        header = f'''<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="{r or './'}" aria-label="Global Chef League home"><img src="{r}assets/img/gcl-logo-horizontal.svg" alt="Global Chef League" width="285" height="28"></a>
+    <div class="head-cta"><span class="head-price">League Chef · $25/Year</span><a class="btn btn--primary btn--sm" href="{e(STRIPE_LINK)}">Join Now</a></div>
+  </div>
+</header>'''
+        footer = f'''<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid foot-grid--min">
+      <div><img src="{r}assets/img/gcl-logo-stacked-white.svg" alt="Global Chef League" width="115" height="96"><p class="foot-tag">Compete. Get Discovered. Get Booked.</p></div>
+      <div class="foot-col"><div class="eyebrow">Join the League</div><a href="{e(STRIPE_LINK)}">Become a League Chef — $25/Year</a><a href="{r}#profile">See a Sample Profile</a><a href="{r}#faq">FAQ</a></div>
+      <div class="foot-col"><div class="eyebrow">Questions</div><a href="mailto:{e(CONTACT_EMAIL)}">{e(CONTACT_EMAIL)}</a><span>Full site coming soon</span></div>
+    </div>
+    <div class="foot-bottom"><span>© <span id="year">{YEAR}</span> Global Chef League</span><span>GlobalChefLeague.com</span></div>
+  </div>
+</footer>'''
+    else:
+        header = f'''<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="{r or './'}" aria-label="Global Chef League home"><img src="{r}assets/img/gcl-logo-horizontal.svg" alt="Global Chef League" width="285" height="28"></a>
+    <button class="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Menu"><span></span><span></span><span></span></button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      {links}
+      <a class="btn btn--primary btn--sm" href="{r}membership/">Join Now</a>
+    </nav>
+  </div>
+</header>'''
+        footer = f'''<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><img src="{r}assets/img/gcl-logo-stacked-white.svg" alt="Global Chef League" width="115" height="96"><p class="foot-tag">Compete. Get Discovered. Get Booked.</p></div>
+      <div class="foot-col"><div class="eyebrow">Explore</div><a href="{r}chefs/">Find a Chef</a><a href="{r}competitions/">Competitions</a><a href="{r}membership/">Membership</a><a href="{r}about/">About</a><a href="{r}contact/">Contact</a></div>
+      <div class="foot-col"><div class="eyebrow">Legal</div><a href="{r}membership-terms/">Membership Terms</a><a href="{r}privacy/">Privacy Policy</a><a href="{r}terms/">Website Terms</a><a href="{r}directory-disclaimer/">Directory Disclaimer</a></div>
+      <div class="foot-col"><div class="eyebrow">The League</div><a href="{r}competitions/">Chef Battle</a><a href="{r}competitions/#world-chef-cup">World Chef Cup</a><span>ChefCon</span></div>
+    </div>
+    <div class="foot-bottom"><span>© <span id="year">{YEAR}</span> Global Chef League</span><span>GlobalChefLeague.com</span></div>
+  </div>
+</footer>'''
     out = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -193,30 +247,11 @@ def page(path, title, desc, body, active=None, noindex=False):
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="site-header">
-  <div class="wrap">
-    <a class="brand" href="{r}" aria-label="Global Chef League home"><img src="{r}assets/img/gcl-logo-horizontal.svg" alt="Global Chef League" width="285" height="28"></a>
-    <button class="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Menu"><span></span><span></span><span></span></button>
-    <nav class="nav" id="site-nav" aria-label="Main">
-      {links}
-      <a class="btn btn--primary btn--sm" href="{r}membership/">Join Now</a>
-    </nav>
-  </div>
-</header>
+{header}
 <main id="main">
 {body}
 </main>
-<footer class="site-footer">
-  <div class="wrap">
-    <div class="foot-grid">
-      <div><img src="{r}assets/img/gcl-logo-stacked-white.svg" alt="Global Chef League" width="115" height="96"><p class="foot-tag">Compete. Get Discovered. Get Booked.</p></div>
-      <div class="foot-col"><div class="eyebrow">Explore</div><a href="{r}chefs/">Find a Chef</a><a href="{r}competitions/">Competitions</a><a href="{r}membership/">Membership</a><a href="{r}about/">About</a><a href="{r}contact/">Contact</a></div>
-      <div class="foot-col"><div class="eyebrow">Legal</div><a href="{r}membership-terms/">Membership Terms</a><a href="{r}privacy/">Privacy Policy</a><a href="{r}terms/">Website Terms</a><a href="{r}directory-disclaimer/">Directory Disclaimer</a></div>
-      <div class="foot-col"><div class="eyebrow">The League</div><a href="{r}competitions/">Chef Battle</a><a href="{r}competitions/#world-chef-cup">World Chef Cup</a><span>ChefCon</span></div>
-    </div>
-    <div class="foot-bottom"><span>© <span id="year">{YEAR}</span> Global Chef League</span><span>GlobalChefLeague.com</span></div>
-  </div>
-</footer>
+{footer}
 <script src="{r}assets/js/site.js" defer></script>
 </body>
 </html>
@@ -306,6 +341,174 @@ def home():
 </section>'''
     page("index.html", "Global Chef League — Compete. Get Discovered. Get Booked.",
          "Join Global Chef League as a League Chef for $25 a year. Showcase your talent, promote your culinary services, and compete in Chef Battle events.", body, active=None)
+
+def landing():
+    c = dict(chef_by("james-rivera"))
+    # Landing version: no Chapter President references
+    c.update(primary_role="League Chef", chapter="", city=c["city"].replace(" Chapter", ""),
+             bio=c["bio"].replace(" As Miami Chapter President she hosts the city's Chef Battle qualifiers.", ""))
+    first, rest = c["name"].split()[0], " ".join(c["name"].split()[1:])
+    pillars = [
+        ("01", "Get Discovered", "Your League Chef profile puts your photo, experience and specialties in the Global Chef League directory, so customers can find you by city, specialty and service."),
+        ("02", "Promote Your Services", "Private dining, catering, cooking classes, corporate events. List what you offer and what you charge, priced your way."),
+        ("03", "Get Booked Directly", "Customers contact you directly from your profile. No middlemen and no booking commissions. You keep what you earn."),
+    ]
+    pil = "".join(f'<div class="pillar"><div class="num">{n}</div><h3 class="h3">{e(t)}</h3><p>{e(b)}</p></div>' for n, t, b in pillars)
+    order = ["02", "03", "04", "06", "01", "05"]
+    incd = {n: (t, b) for n, t, b in INCLUDES}
+    inc = "".join(f'<div class="inc"><div class="num">0{i+1}</div><div class="t">{e(incd[n][0])}</div><p>{e(incd[n][1])}</p></div>' for i, n in enumerate(order))
+    glance = [("Public chef profile", "Included", False), ("Chef directory listing", "Included", False), ("Promote culinary services", "Included", False),
+              ("Booking commissions", "0%", True), ("Annual membership", "$25/year", True), ("Membership title", "League Chef", False),
+              ("Chef Battle entry fees", "Free for active members", True), ("League Champion recognition", "Earned through competition", False)]
+    gl = "".join(f'<div class="glance-row"><span class="b">{e(b)}</span><span class="d{" hi" if hi else ""}">{e(d)}</span></div>' for b, d, hi in glance)
+    faqs = [FAQS[3], FAQS[4], FAQS[5], FAQS[0],
+            ("What goes on my profile?", "Your photo, a short bio, the services you offer with starting rates, your culinary specialties, a photo gallery, and how customers can reach you: email, phone, website, booking link and social media."),
+            FAQS[1], FAQS[2], FAQS[8], FAQS[9]]
+    fq = "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
+    faq_ld = json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faqs]})
+    svcs = "".join(f'<div class="svc"><span class="n">{e(n)}</span><span class="r">{e(r)}</span></div>' for n, r in c["services"])
+    specs = "".join(f'<span class="badge badge--wash">{e(x)}</span>' for x in c["specialties"])
+    svc_tags = "".join(f'<span class="svc-tag">{e(x)}</span>' for x in SERVICES)
+    steps = [("01", "Join for $25/Year", "Check out securely through Stripe. Your membership starts right away."),
+             ("02", "Build Your Profile", "Add your photo, bio, services, rates, specialties and how customers can reach you."),
+             ("03", "Get Listed & Get Booked", "We verify your membership and publish your profile in the League Chef directory.")]
+    how = "".join(f'<div class="pillar"><div class="num">{n}</div><h3 class="h3">{e(t)}</h3><p>{e(b)}</p></div>' for n, t, b in steps)
+    path = "".join(f'<div class="path-step"><div class="num {g}">{n}</div><div class="t">{e(t)}</div><div class="s">{e(x)}</div></div>' for n, t, x, g in PATH)
+    body = f'''
+<section class="bg-navy hero">
+  <div class="wrap hero-grid">
+    <div class="stack-lg">
+      <span class="badge badge--brand badge--capsule">Now Accepting League Chef Profiles</span>
+      <h1 class="h-hero">Get Discovered.<br>Get Booked<span class="dot">.</span></h1>
+      <p>Promote yourself and your culinary services with a League Chef profile in the Global Chef League directory. Showcase your experience, list your services and rates, and let customers contact you directly, with no booking commissions.</p>
+      <div class="btn-row">{btn("Join Now — $25/Year", STRIPE_LINK, "primary", "lg")}{btn("See a Sample Profile", "#profile", "inverse", "lg")}</div>
+      <p class="legal">Secure checkout through Stripe. Renews yearly; cancel anytime.</p>
+    </div>
+    <div class="price-card">
+      <div class="top"><span>League Chef Membership</span><span class="badge badge--brand">Annual</span></div>
+      <div class="price-big" aria-label="$25 per year"><span class="cur">$</span><span class="amt">25</span><span class="per">/YEAR</span></div>
+      <ul class="ticks">
+        <li>Your own public chef profile</li>
+        <li>Listed in the League Chef directory</li>
+        <li>Promote your services and rates</li>
+        <li>0% booking commissions</li>
+        <li>Plus: Chef Battle with no entry fees</li>
+      </ul>
+      {btn("Join Now", STRIPE_LINK, "primary", "lg", block=True)}
+    </div>
+  </div>
+</section>
+
+<section class="svc-strip">
+  <div class="wrap"><span class="label">Get found for</span>{svc_tags}</div>
+</section>
+
+<section class="section" id="profile" style="scroll-margin-top:76px">
+  <div class="wrap">
+    <div class="roster-head">
+      <div class="stack"><div class="eyebrow">Your Profile</div><h2 class="h2">Your Profile. Your Business<span class="dot">.</span></h2><div class="rule"></div></div>
+      <p style="font-size:18px">Every League Chef gets a public profile page in the Global Chef League directory. It works like your own chef website: your story, your services, your rates and your contact details in one shareable link. Here's what yours could look like.</p>
+    </div>
+    <div class="mock" aria-label="Sample League Chef profile">
+      <div class="mock-bar"><span></span><span></span><span></span><div class="mock-url">globalchefleague.com/chefs/{c["slug"]}</div></div>
+      <div class="mock-hero">
+        <div class="mock-photo">{ph("Your profile photo", photo="profile", w=700, pos="center 20%")}<span class="pin">1</span></div>
+        <div class="stack" style="gap:18px">
+          <div class="crumbs">Find a Chef / {e(c["region"])}</div>
+          <div class="badges">{badge("League Chef", True)}</div>
+          <div class="mock-h1">Chef {e(first)}<br>{e(rest)}<span class="dot">.</span></div>
+          <div class="profile-loc">{e(c["city"])}</div>
+          <div class="stats"><div class="stat"><span class="label">Starting at</span><span class="v">{e(c["stat_rate"])}</span></div><div class="stat"><span class="label">Service area</span><span class="v">{e(c["area"])}</span></div><div class="stat"><span class="label">Specialty</span><span class="v">{e(c["specialty"])}</span></div></div>
+        </div>
+      </div>
+      <div class="mock-body">
+        <div>
+          <div class="p-sec"><h2>About Me</h2><div class="rule rule--sm"></div><p>{e(c["bio"])}</p></div>
+          <div class="p-sec"><h2>My Services <span class="pin pin--inline">2</span></h2><div class="rule rule--sm"></div><div class="svc-list">{svcs}</div></div>
+          <div class="p-sec" style="margin-bottom:32px"><h2>Culinary Specialties</h2><div class="rule rule--sm"></div><div class="badges" style="gap:8px">{specs}</div></div>
+          <div class="gallery mock-gallery">{ph("Signature dish", True, photo="dish", w=1000)}{ph("Event photo", True, photo="event1", w=600)}{ph("Event photo", True, photo="event2", w=600)}<span class="pin pin--gallery">3</span></div>
+        </div>
+        <div class="contact-card mock-card">
+          <span class="pin pin--corner">4</span>
+          <div class="eyebrow">Contact &amp; Bookings</div>
+          <div class="t">Interested in working with Chef {e(c["name"])}?</div>
+          <p>Contact the chef directly to discuss services, availability, and pricing.</p>
+          <span class="btn btn--primary btn--lg btn--block" aria-hidden="true">Contact Chef</span>
+          <div class="contact-links"><span>Website</span><span>Instagram</span><span>Booking Website</span></div>
+          <p class="legal">This chef operates independently. All inquiries, bookings, payments, and service arrangements are handled directly with the chef.</p>
+        </div>
+      </div>
+    </div>
+    <div class="grid g-4 callouts">
+      <div><span class="pin pin--inline">1</span><div class="t">Your photo &amp; story</div><p>A headshot and bio that show who you are, where you cook and what makes your food yours.</p></div>
+      <div><span class="pin pin--inline">2</span><div class="t">Services &amp; rates</div><p>List each service with a starting rate, or "Contact for Pricing". You set your prices.</p></div>
+      <div><span class="pin pin--inline">3</span><div class="t">Your best work</div><p>A gallery of signature dishes and events so customers can see what they're booking.</p></div>
+      <div><span class="pin pin--inline">4</span><div class="t">Direct contact</div><p>Email, phone, website, Instagram and booking link. Customers reach you, not us.</p></div>
+    </div>
+    <p class="legal" style="margin-top:28px">Sample profile for illustration. Not an actual Global Chef League member.</p>
+    <div style="margin-top:40px">{btn("Create Your Profile — $25/Year", STRIPE_LINK, "primary", "lg")}</div>
+  </div>
+</section>
+
+<section class="section bg-bone">
+  <div class="wrap">
+    {head_block("Promote Yourself. Keep What You Earn", eyebrow="Why Join")}
+    <div class="grid g-3">{pil}</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    {head_block("How It Works", eyebrow="Three Steps")}
+    <div class="grid g-3">{how}</div>
+  </div>
+</section>
+
+<section class="section bg-bone">
+  <div class="wrap">
+    {head_block("Your League Chef Membership Includes", hcls="h2 h2--sm")}
+    <div class="grid g-3" style="gap:48px 40px">{inc}</div>
+  </div>
+</section>
+
+<section class="section bg-navy">
+  <div class="wrap split-72">
+    <div class="stack" style="gap:20px">
+      <div class="eyebrow">Plus: Chef Battle</div>
+      <h2 class="h2">Put Your Skills to the Test<span class="dot">.</span></h2>
+      <p style="font-size:18px">Your membership also makes you eligible for Chef Battle, our live culinary competitions, with no additional entry fees. Compete locally, advance regionally, and qualify for the World Battle.</p>
+    </div>
+    <div class="path-grid">{path}</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap side-grid">
+    <div class="stack"><div class="eyebrow">Membership at a Glance</div><h2 class="h2 h2--sm">One Membership<span class="dot">.</span></h2><div class="rule"></div><p>Join Global Chef League for just $25 a year. Create your chef profile, promote your services, and get booked directly, plus apply to compete in Chef Battle events without additional entry fees.</p></div>
+    <div class="glance"><div class="glance-row head"><span>Benefit</span><span>Details</span></div>{gl}</div>
+  </div>
+</section>
+
+<section class="section--band bg-navy">
+  <div class="wrap band-grid">
+    <div class="stack" style="gap:14px">
+      <h2 class="h2">Get Listed for $25/Year</h2>
+      <p style="font-size:18px">Your own League Chef profile, your services and rates, and direct bookings with no commissions. One annual membership.</p>
+      <p class="legal" style="margin-top:8px">Membership renews automatically each year unless canceled. Membership does not guarantee bookings. Competition participation is subject to eligibility, selection, and availability.</p>
+    </div>
+    {btn("Join Now", STRIPE_LINK, "primary", "lg")}
+  </div>
+</section>
+
+<section class="section" id="faq" style="scroll-margin-top:76px">
+  <div class="wrap side-grid">
+    <div class="stack"><h2 class="h2 h2--sm">Frequently Asked Questions<span class="dot">.</span></h2><div class="rule"></div><p>Still have questions? Email <a href="mailto:{e(CONTACT_EMAIL)}">{e(CONTACT_EMAIL)}</a>.</p></div>
+    <div class="faq">{fq}</div>
+  </div>
+</section>
+<script type="application/ld+json">{faq_ld}</script>'''
+    page("index.html", "Global Chef League — Promote Your Culinary Services | League Chef Directory",
+         "Get discovered and get booked. Create a League Chef profile in the Global Chef League directory for $25 a year: showcase your experience, list your services and rates, and keep 100% of your bookings.", body)
 
 def directory():
     rows = ""
@@ -590,7 +793,7 @@ def welcome():
     </div>
     <div class="stack-lg" style="align-items:stretch">
       <div class="steps">{st}</div>
-      <div class="stack" style="gap:14px"><p>In the meantime, explore upcoming Chef Battle competitions and watch your email for league updates.</p>{btn("Explore Competitions", "{R}competitions/", "secondary")}</div>
+      <div class="stack" style="gap:14px"><p>{"Watch your email for league updates and the first Chef Battle competition announcements." if LANDING_MODE else "In the meantime, explore upcoming Chef Battle competitions and watch your email for league updates."}</p>{"" if LANDING_MODE else btn("Explore Competitions", "{R}competitions/", "secondary")}</div>
     </div>
   </div>
 </section>'''
@@ -684,7 +887,7 @@ def legal_pages():
             content = "".join(f"<p>{e(p)}</p>" for p in paras)
             note = '<p class="sample-note">Draft for review — have your attorney approve before launch.</p>'
         else:
-            content = f'<p>The full {e(title)} will be published here before launch.</p><p>Questions in the meantime? <a href="{{R}}contact/">Contact us</a>.</p>'
+            content = f'<p>The full {e(title)} will be published here before launch.</p><p>Questions in the meantime? <a href="mailto:{e(CONTACT_EMAIL)}">Email us</a>.</p>'
             note = '<p class="sample-note">Placeholder — paste your attorney-approved text here.</p>'
         body = f'''
 <section class="bg-navy page-hero" style="padding:72px 0"><div class="wrap"><h1 class="h1 h1--sm">{e(title)}<span class="dot">.</span></h1></div></section>
@@ -698,7 +901,7 @@ def not_found():
     <div class="eyebrow">Error 404</div>
     <h1 class="h1">Off the Menu<span class="dot">.</span></h1>
     <p>We couldn't find that page. It may have moved, or the link may be out of date.</p>
-    <div class="btn-row">{btn("Back to Home", "{R}", "primary", "lg")}{btn("Find a Chef", "{R}chefs/", "inverse", "lg")}</div>
+    <div class="btn-row">{btn("Back to Home", "{R}", "primary", "lg")}{"" if LANDING_MODE else btn("Find a Chef", "{R}chefs/", "inverse", "lg")}</div>
   </div>
 </section>'''
     page("404.html", "Page Not Found", "Page not found.", body, noindex=True)
@@ -709,8 +912,11 @@ def sitemap():
     (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL.rstrip('/')}/sitemap.xml\n")
 
 if __name__ == "__main__":
-    home(); directory()
-    for c in CHEFS: profile(c)
-    competitions(); membership(); about(); contact(); welcome(); submit_profile(); legal_pages(); not_found()
+    if LANDING_MODE:
+        landing(); welcome(); submit_profile(); legal_pages(); not_found()
+    else:
+        home(); directory()
+        for c in CHEFS: profile(c)
+        competitions(); membership(); about(); contact(); welcome(); submit_profile(); legal_pages(); not_found()
     sitemap()
     print(f"Built {len(PAGES)} pages into {ROOT}")
