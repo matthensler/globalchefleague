@@ -121,6 +121,8 @@ FAQS = [
     ("What is a League Champion?", "League Champion is a recognition given to chefs who have earned an official championship title through a recognized competition."),
     ("Does membership renew automatically?", "Yes. Membership renews annually unless canceled before the next renewal date."),
     ("Can I cancel my membership?", "Yes. You can cancel future renewals through the subscription management link provided. Your membership remains active through the paid term, subject to the Membership Terms."),
+    ("Can I get a refund?", "No. All sales are final. Membership fees are non-refundable, including for any unused part of a membership year. You can cancel future renewals at any time, and your membership stays active through the end of the term you paid for."),
+    ("When will my profile be created?", "Your profile is created only after you submit your profile information. After checkout you'll be sent to the profile form, where you add your photo, bio, services, rates and contact details. Once we receive your submission and verify your membership, we'll create and publish your profile. If you don't submit your information, we can't create your profile."),
 ]
 ROLE_CARDS = [
     ("League Chef", "", "League Chefs", "The heart of Global Chef League. Culinary professionals who showcase their skills, promote their services, and participate in the league."),
@@ -363,7 +365,7 @@ def landing():
     gl = "".join(f'<div class="glance-row"><span class="b">{e(b)}</span><span class="d{" hi" if hi else ""}">{e(d)}</span></div>' for b, d, hi in glance)
     faqs = [FAQS[3], FAQS[4], FAQS[5], FAQS[0],
             ("What goes on my profile?", "Your photo, a short bio, the services you offer with starting rates, your culinary specialties, a photo gallery, and how customers can reach you: email, phone, website, booking link and social media."),
-            FAQS[1], FAQS[2], FAQS[8], FAQS[9]]
+            FAQS[11], FAQS[1], FAQS[2], FAQS[8], FAQS[9], FAQS[10]]
     fq = "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
     faq_ld = json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faqs]})
     svcs = "".join(f'<div class="svc"><span class="n">{e(n)}</span><span class="r">{e(r)}</span></div>' for n, r in c["services"])
@@ -382,7 +384,7 @@ def landing():
       <h1 class="h-hero">Get Discovered.<br>Get Booked<span class="dot">.</span></h1>
       <p>Promote yourself and your culinary services with a League Chef profile in the Global Chef League directory. Showcase your experience, list your services and rates, and let customers contact you directly, with no booking commissions.</p>
       <div class="btn-row">{btn("Join Now — $25/Year", STRIPE_LINK, "primary", "lg")}{btn("See a Sample Profile", "#profile", "inverse", "lg")}</div>
-      <p class="legal">Secure checkout through Stripe. Renews yearly; cancel anytime.</p>
+      <p class="legal">Secure checkout through Stripe. Renews yearly; cancel anytime. All sales final.</p>
     </div>
     <div class="price-card">
       <div class="top"><span>League Chef Membership</span><span class="badge badge--brand">Annual</span></div>
@@ -426,7 +428,7 @@ def landing():
           <div class="p-sec"><h2>About Me</h2><div class="rule rule--sm"></div><p>{e(c["bio"])}</p></div>
           <div class="p-sec"><h2>My Services <span class="pin pin--inline">2</span></h2><div class="rule rule--sm"></div><div class="svc-list">{svcs}</div></div>
           <div class="p-sec" style="margin-bottom:32px"><h2>Culinary Specialties</h2><div class="rule rule--sm"></div><div class="badges" style="gap:8px">{specs}</div></div>
-          <div class="gallery mock-gallery">{ph("Signature dish", True, photo="dish", w=1000)}{ph("Event photo", True, photo="event1", w=600)}{ph("Event photo", True, photo="event2", w=600)}<span class="pin pin--gallery">3</span></div>
+          <div class="gallery mock-gallery">{ph("Signature dish", True, photo="dish", w=1000, pos="center 80%")}{ph("Event photo", True, photo="event1", w=600)}{ph("Event photo", True, photo="event2", w=600)}<span class="pin pin--gallery">3</span></div>
         </div>
         <div class="contact-card mock-card">
           <span class="pin pin--corner">4</span>
@@ -494,7 +496,7 @@ def landing():
     <div class="stack" style="gap:14px">
       <h2 class="h2">Get Listed for $25/Year</h2>
       <p style="font-size:18px">Your own League Chef profile, your services and rates, and direct bookings with no commissions. One annual membership.</p>
-      <p class="legal" style="margin-top:8px">Membership renews automatically each year unless canceled. Membership does not guarantee bookings. Competition participation is subject to eligibility, selection, and availability.</p>
+      <p class="legal" style="margin-top:8px">Membership renews automatically each year unless canceled. All sales are final. Your profile is created after you submit your profile information. Membership does not guarantee bookings. Competition participation is subject to eligibility, selection, and availability.</p>
     </div>
     {btn("Join Now", STRIPE_LINK, "primary", "lg")}
   </div>
