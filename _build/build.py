@@ -82,6 +82,24 @@ CHEFS = [
          specialties=["Italian", "Fresh pasta", "Emilia-Romagna", "Hand-rolled"],
          email="luca@example.com", phone="", website="#", instagram="#", booking="#"),
 ]
+HECTOR_BIO = "My culinary journey began at the age of five, standing beside my father in our family kitchen. My father was a chef in Cuba, and he taught me something that has stayed with me throughout my life: great cooking isn't just about ingredients or techniques—it's about love, family, and the memories we create around the table.\n\nAs a second-generation Cuban American chef, I have dedicated over 37 years to the culinary profession, blending the bold, soulful flavors of my Cuban heritage with the precision and elegance of classical French cuisine.\n\nI am a proud graduate of Johnson & Wales University, but I often say that while culinary school taught me technique, my father taught me how to cook with my heart.\n\nThroughout my career, I've had the privilege of cooking for an extraordinary range of guests, from intimate family gatherings and elegant weddings to corporate events and high-profile clientele, including George Foreman, Stevie Wonder, and the Washington Nationals.\n\nToday, as the Founder and Executive Chef of Moya’s Maison de Sabor, based in Spotsylvania, Virginia, I specialize in private dining, catering, personalized culinary experiences, and hands-on cooking classes.\n\nMy signature dish, Ropa Vieja, holds a special place in my heart. It was one of the first dishes my father taught me to prepare, and every time I make it, I honor his legacy and the traditions that shaped me.\n\nWhat makes my cooking unique is my philosophy: Keep it simple, respect the ingredients, and let the flavors speak for themselves. I believe exceptional food doesn't need to be complicated. It needs to be prepared with patience, skill, authenticity, and passion.\n\nFor me, being a chef has never been just a profession. It's my way of connecting people, preserving traditions, and making everyone who sits at my table feel like family.\n\nI am the chef I am today because of my father. His lessons are the foundation of everything I create.\n\nAt Moya’s Maison de Sabor, we don't just serve meals. We tell stories, celebrate cultures, and create unforgettable experiences—one plate at a time.\n\nTaste the Tradition. Feel the Soul.\n\n“There's always room for one more at my table!”\n\n— Chef Hector Moya"
+
+# Real, published League Chef members. Photos go in assets/img/chefs/ (leave "" until supplied).
+MEMBERS = [
+    dict(slug="hector-moya", no="01", name="Hector Moya", sample=False,
+         tagline="Founder & Executive Chef, Moya’s Maison de Sabor",
+         city="Spotsylvania, Virginia", region="Virginia",
+         primary_role="League Chef", achievements=[], titles=[], chapter="",
+         specialty="Cuban", rate="From $85", stat_rate="From $85", area="Northern Virginia",
+         bio=HECTOR_BIO,
+         services=[(x, "Contact for Pricing") for x in ["Private dining", "Catering and special events", "Cooking classes", "Corporate events", "Culinary experiences"]],
+         specialties=["Authentic Cuban & Caribbean", "Classic French & Contemporary Fine Dining", "Italian & Mediterranean", "Latin American Fusion", "Private Chef Tasting Menus"],
+         email="chef@moyas-maison-de-sabor.com", phone="+15402274798", phone_display="(540) 227-4798",
+         website="https://www.moyas-maison-de-sabor.com", instagram="https://www.instagram.com/chefmoya1/", facebook="", booking="",
+         photo="assets/img/chefs/hector-moya.jpg", photo_pos="center 22%",
+         gallery=["assets/img/chefs/hector-moya-1.jpg"]),
+]
+
 # Which chef is featured in the home hero card
 FEATURED = "maria-santos"
 
@@ -559,18 +577,25 @@ def directory():
     page("chefs/index.html", "Find a Chef", "Find a League Chef for private dining, catering, cooking classes, corporate events and culinary experiences. Contact chefs directly — no booking commissions.", body, active="Find a Chef")
 
 def profile(c):
+    c = dict(dict(sample=True, tagline="", phone_display="", facebook="", photo="", photo_pos="center 25%", gallery=[], extra_stat=None), **c)
     first = c["name"].split()[0]
     rest = " ".join(c["name"].split()[1:])
     stats = [("Starting at", c["stat_rate"], "")]
     if c["area"]: stats.append(("Service area", c["area"], ""))
-    if c["primary_role"] == "Chapter President" and c["chapter"]:
+    if c["primary_role"] == "Chapter President" and c["chapter"] and not LANDING_MODE:
         stats.append(("Chapter", c["chapter"], ""))
     elif c["titles"]:
         stats.append(("Title", c["titles"][0], "gold sm"))
+    else:
+        stats.append(("Specialty", c["specialty"], ""))
     stat_html = "".join(f'<div class="stat"><span class="label">{e(k)}</span><span class="v {g}">{e(v)}</span></div>' for k, v, g in stats)
     svcs = "".join(f'<div class="svc"><span class="n">{e(n)}</span><span class="r">{e(r)}</span></div>' for n, r in c["services"])
-    specs = "".join(f'<span class="badge badge--wash">{e(s)}</span>' for s in c["specialties"])
-    badges_hdr = "".join(badge(l, True) for l in [c["primary_role"]] + c["achievements"] + (["League Chef"] if c["primary_role"] != "League Chef" else []))
+    specs = "".join(f'<span class="badge badge--wash">{e(x)}</span>' for x in c["specialties"])
+    roles = [c["primary_role"]] + c["achievements"]
+    if LANDING_MODE:
+        roles = [r for r in roles if r != "Chapter President"] or ["League Chef"]
+    if "League Chef" not in roles: roles.append("League Chef")
+    badges_hdr = "".join(badge(l, True) for l in roles)
     if c["email"]:
         contact_href = f'mailto:{c["email"]}?subject=' + "Inquiry%20via%20Global%20Chef%20League"
     elif c["phone"]:
@@ -578,20 +603,40 @@ def profile(c):
     else:
         contact_href = c["booking"]
     links = []
-    if c["website"]: links.append(f'<a href="{e(c["website"])}" rel="noopener">Website</a>')
-    if c["instagram"]: links.append(f'<a href="{e(c["instagram"])}" rel="noopener">Instagram</a>')
-    if c["booking"]: links.append(f'<a href="{e(c["booking"])}" rel="noopener">Booking Website</a>')
+    if c["website"]: links.append(f'<a href="{e(c["website"])}" target="_blank" rel="noopener">Website</a>')
+    if c["instagram"]: links.append(f'<a href="{e(c["instagram"])}" target="_blank" rel="noopener">Instagram</a>')
+    if c["facebook"]: links.append(f'<a href="{e(c["facebook"])}" target="_blank" rel="noopener">Facebook</a>')
+    if c["booking"]: links.append(f'<a href="{e(c["booking"])}" target="_blank" rel="noopener">Booking Website</a>')
+    direct = ""
+    if not c["sample"] and (c["email"] or c["phone"]):
+        rows_ = ""
+        if c["email"]: rows_ += f'<div class="cline"><span class="label">Email</span><a href="mailto:{e(c["email"])}">{e(c["email"])}</a></div>'
+        if c["phone"]: rows_ += f'<div class="cline"><span class="label">Phone</span><a href="tel:{e(c["phone"])}">{e(c["phone_display"] or c["phone"])}</a></div>'
+        direct = f'<div class="clines">{rows_}</div>'
     titles = ""
     if c["titles"]:
         titles = '<div class="p-sec"><h2>Championship Titles</h2><div class="rule rule--sm"></div><div class="badges">' + "".join(f'<span class="badge badge--award" style="height:30px;padding:0 12px;font-size:13px">★ {e(t)}</span>' for t in c["titles"]) + "</div></div>"
+    bio = "".join(f"<p>{e(par.strip())}</p>" for par in c["bio"].split("\n\n") if par.strip())
+    def img(label, src, light=False, pos="center"):
+        if src:
+            return f'<div class="ph{" ph--light" if light else ""}">{e(label)}<img src="{{R}}{e(src)}" alt="{e(label)}" style="object-position:{pos}"></div>'
+        return ph(label, light)
+    if c["gallery"]:
+        gal = f'<div class="gallery gallery--{min(len(c["gallery"]),3)}">' + "".join(img(f"{c['name']} — photo {i+1}", g, True) for i, g in enumerate(c["gallery"][:3])) + "</div>"
+    elif c["sample"]:
+        gal = f'<div class="gallery">{ph("Signature dish", True)}{ph("Event photo", True)}{ph("Event photo", True)}</div>'
+    else:
+        gal = ""
+    crumbs = (f'League Chef / {e(c["region"])}' if LANDING_MODE else f'<a href="{{R}}chefs/">Find a Chef</a> / {e(c["region"])}')
     body = f'''
 <section class="bg-navy profile-hero">
   <div class="wrap profile-grid">
-    <div class="profile-photo">{ph("Profile photo")}</div>
+    <div class="profile-photo">{img("Chef " + c["name"], c["photo"], pos=c["photo_pos"])}</div>
     <div class="stack" style="gap:22px;padding-bottom:8px">
-      <div class="crumbs"><a href="{{R}}chefs/">Find a Chef</a> / {e(c["region"])}</div>
+      <div class="crumbs">{crumbs}</div>
       <div class="badges">{badges_hdr}</div>
       <h1 class="h-hero">Chef {e(first)}<br>{e(rest)}<span class="dot">.</span></h1>
+      {f'<div class="profile-tagline">{e(c["tagline"])}</div>' if c["tagline"] else ""}
       <div class="profile-loc">{e(c["city"])}</div>
       <div class="stats{" two" if len(stats) == 2 else ""}">{stat_html}</div>
     </div>
@@ -600,24 +645,25 @@ def profile(c):
 <section class="profile-body">
   <div class="wrap profile-cols">
     <div>
-      <p class="sample-note">Sample profile for layout. Not an actual Global Chef League member.</p>
-      <div class="p-sec"><h2>About Me</h2><div class="rule rule--sm"></div><p>{e(c["bio"])}</p></div>
+      {'<p class="sample-note">Sample profile for layout. Not an actual Global Chef League member.</p>' if c["sample"] else ""}
+      <div class="p-sec p-bio"><h2>About Me</h2><div class="rule rule--sm"></div>{bio}</div>
       {titles}
       <div class="p-sec"><h2>My Services</h2><div class="rule rule--sm"></div><div class="svc-list">{svcs}</div></div>
       <div class="p-sec"><h2>Culinary Specialties</h2><div class="rule rule--sm"></div><div class="badges" style="gap:8px">{specs}</div></div>
-      <div class="gallery">{ph("Signature dish", True)}{ph("Event photo", True)}{ph("Event photo", True)}</div>
+      {gal}
     </div>
     <aside class="contact-card">
       <div class="eyebrow">Contact &amp; Bookings</div>
       <div class="t">Interested in working with Chef {e(c["name"])}?</div>
       <p>Contact the chef directly to discuss services, availability, and pricing.</p>
       {btn("Contact Chef", contact_href, "primary", "lg", block=True)}
+      {direct}
       {'<div class="contact-links">' + "".join(links) + '</div>' if links else ""}
       <p class="legal">This chef operates independently. All inquiries, bookings, payments, and service arrangements are handled directly with the chef.</p>
     </aside>
   </div>
 </section>'''
-    page(f"chefs/{c['slug']}/index.html", f"Chef {c['name']}", f"Chef {c['name']} — {c['specialty']} chef in {c['city']}. {c['rate']}. View services and contact the chef directly.", body, active="Find a Chef")
+    page(f"chefs/{c['slug']}/index.html", f"Chef {c['name']}", f"Chef {c['name']}, {c['specialty']} chef in {c['city']}. {c['rate']}. View services and contact the chef directly.", body, active="Find a Chef", noindex=c["sample"] and LANDING_MODE)
 
 def competitions():
     rows = "".join(f'''<div class="ev-row">
@@ -916,9 +962,10 @@ def sitemap():
 if __name__ == "__main__":
     if LANDING_MODE:
         landing(); welcome(); submit_profile(); legal_pages(); not_found()
+        for m in MEMBERS: profile(m)
     else:
         home(); directory()
-        for c in CHEFS: profile(c)
+        for c in MEMBERS + CHEFS: profile(c)
         competitions(); membership(); about(); contact(); welcome(); submit_profile(); legal_pages(); not_found()
     sitemap()
     print(f"Built {len(PAGES)} pages into {ROOT}")
