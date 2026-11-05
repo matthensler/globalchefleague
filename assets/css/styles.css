@@ -519,3 +519,8 @@ h1,h2,h3,p{margin:0}
   .gallery--1{grid-template-columns:1fr;height:auto}
   .gallery--1 > :first-child{grid-column:auto;height:420px}
 }
+.legal-body ul{margin:0 0 14px;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.legal-body .legal-date{font:700 13px/1 var(--f-label);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-500);margin-bottom:24px}
+.legal-body .legal-date strong{font-weight:700}
+.legal-body h2:first-of-type{margin-top:32px}
+.legal-body .legal-callout{background:var(--bone);border-left:4px solid var(--red);padding:14px 18px;color:var(--ink)}

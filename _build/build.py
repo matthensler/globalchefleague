@@ -20,6 +20,7 @@ from pathlib import Path
 # ============================================================
 SITE_URL      = "https://globalchefleague.com"    # used for canonical links + sitemap
 STRIPE_LINK   = "https://buy.stripe.com/aFa4gB5Kd0nX3OP5Y89ws02"
+GTM_ID        = "GTM-PDL674QJ"   # Google Tag Manager container. "" to turn off.
 LANDING_MODE  = True   # True = recruitment landing page only (pre-launch). False = full 9-page site.
 FORM_CONTACT  = "https://formspree.io/f/REPLACE_CONTACT_FORM_ID"
 FORM_PROFILE  = "https://formspree.io/f/REPLACE_PROFILE_FORM_ID"
@@ -218,7 +219,7 @@ def page(path, title, desc, body, active=None, noindex=False):
     <div class="foot-grid foot-grid--min">
       <div><img src="{r}assets/img/gcl-logo-stacked-white.svg" alt="Global Chef League" width="115" height="96"><p class="foot-tag">Compete. Get Discovered. Get Booked.</p></div>
       <div class="foot-col"><div class="eyebrow">Join the League</div><a href="{e(STRIPE_LINK)}">Become a League Chef — $25/Year</a><a href="{r}#profile">See a Sample Profile</a><a href="{r}#faq">FAQ</a></div>
-      <div class="foot-col"><div class="eyebrow">Questions</div><a href="mailto:{e(CONTACT_EMAIL)}">{e(CONTACT_EMAIL)}</a><span>Full site coming soon</span></div>
+      <div class="foot-col"><div class="eyebrow">Questions</div><a href="mailto:{e(CONTACT_EMAIL)}">{e(CONTACT_EMAIL)}</a><a href="{r}terms/">Terms &amp; Conditions</a><a href="{r}privacy/">Privacy Policy</a></div>
     </div>
     <div class="foot-bottom"><span>© <span id="year">{YEAR}</span> Global Chef League</span><span>GlobalChefLeague.com</span></div>
   </div>
@@ -239,16 +240,29 @@ def page(path, title, desc, body, active=None, noindex=False):
     <div class="foot-grid">
       <div><img src="{r}assets/img/gcl-logo-stacked-white.svg" alt="Global Chef League" width="115" height="96"><p class="foot-tag">Compete. Get Discovered. Get Booked.</p></div>
       <div class="foot-col"><div class="eyebrow">Explore</div><a href="{r}chefs/">Find a Chef</a><a href="{r}competitions/">Competitions</a><a href="{r}membership/">Membership</a><a href="{r}about/">About</a><a href="{r}contact/">Contact</a></div>
-      <div class="foot-col"><div class="eyebrow">Legal</div><a href="{r}membership-terms/">Membership Terms</a><a href="{r}privacy/">Privacy Policy</a><a href="{r}terms/">Website Terms</a><a href="{r}directory-disclaimer/">Directory Disclaimer</a></div>
+      <div class="foot-col"><div class="eyebrow">Legal</div><a href="{r}terms/">Terms &amp; Conditions</a><a href="{r}privacy/">Privacy Policy</a><a href="{r}directory-disclaimer/">Directory Disclaimer</a></div>
       <div class="foot-col"><div class="eyebrow">The League</div><a href="{r}competitions/">Chef Battle</a><a href="{r}competitions/#world-chef-cup">World Chef Cup</a><span>ChefCon</span></div>
     </div>
     <div class="foot-bottom"><span>© <span id="year">{YEAR}</span> Global Chef League</span><span>GlobalChefLeague.com</span></div>
   </div>
 </footer>'''
+    gtm_head = (f"""<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){{w[l]=w[l]||[];w[l].push({{'gtm.start':
+new Date().getTime(),event:'gtm.js'}});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+}})(window,document,'script','dataLayer','{GTM_ID}');</script>
+<!-- End Google Tag Manager -->
+""" if GTM_ID else "")
+    gtm_body = (f"""<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={GTM_ID}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+""" if GTM_ID else "")
     out = f"""<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+{gtm_head}<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{e(full_title)}</title>
 <meta name="description" content="{e(desc)}">
@@ -266,7 +280,7 @@ def page(path, title, desc, body, active=None, noindex=False):
 <link rel="stylesheet" href="{r}assets/css/styles.css">
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
+{gtm_body}<a class="skip" href="#main">Skip to content</a>
 {header}
 <main id="main">
 {body}
@@ -402,7 +416,7 @@ def landing():
       <h1 class="h-hero">Get Discovered.<br>Get Booked<span class="dot">.</span></h1>
       <p>Promote yourself and your culinary services with a League Chef profile in the Global Chef League directory. Showcase your experience, list your services and rates, and let customers contact you directly, with no booking commissions.</p>
       <div class="btn-row">{btn("Join Now — $25/Year", STRIPE_LINK, "primary", "lg")}{btn("See a Sample Profile", "#profile", "inverse", "lg")}</div>
-      <p class="legal">Secure checkout through Stripe. Renews yearly; cancel anytime. All sales final.</p>
+      <p class="legal">Secure checkout through Stripe. Renews yearly; cancel anytime. All sales final. See our <a href="{{R}}terms/" style="color:inherit">Terms &amp; Conditions</a>.</p>
     </div>
     <div class="price-card">
       <div class="top"><span>League Chef Membership</span><span class="badge badge--brand">Annual</span></div>
@@ -919,7 +933,7 @@ def submit_profile():
 LEGAL = {
     "membership-terms": ("Membership Terms", None),
     "privacy": ("Privacy Policy", None),
-    "terms": ("Website Terms", None),
+    "terms": ("Terms & Conditions", None),
     "directory-disclaimer": ("Directory Disclaimer", [
         "Global Chef League provides an online directory where League Chefs can showcase their experience, services, rates, and contact information.",
         "Chefs listed in the directory operate independently. All inquiries, bookings, payments, and service arrangements are handled directly between the customer and the chef.",
@@ -929,8 +943,55 @@ LEGAL = {
     ]),
 }
 
+def md_to_html(md):
+    """Small Markdown converter for legal pages: ###/## headings, - lists, **bold**, paragraphs."""
+    import re
+    def inline(t):
+        t = e(t)
+        return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+    out, lst = [], []
+    def flush():
+        if lst:
+            out.append("<ul>" + "".join(f"<li>{inline(x)}</li>" for x in lst) + "</ul>"); lst.clear()
+    for line in md.splitlines():
+        t = line.strip()
+        if not t:
+            flush(); continue
+        if t.startswith("# "):
+            flush(); continue  # page title comes from the hero
+        if t.startswith("#"):
+            flush(); out.append(f"<h2>{inline(t.lstrip('#').strip())}</h2>"); continue
+        if t.startswith("- "):
+            lst.append(t[2:]); continue
+        flush()
+        if t.startswith("**Effective"):
+            out.append(f'<p class="legal-date">{inline(t)}</p>')
+        elif t.startswith("**") and t.endswith("**"):
+            out.append(f'<p class="legal-callout">{inline(t)}</p>')
+        else:
+            out.append(f"<p>{inline(t)}</p>")
+    flush()
+    return "".join(out)
+
 def legal_pages():
     for slug, (title, paras) in LEGAL.items():
+        src = Path(__file__).parent / "content" / f"{slug}.md"
+        if src.exists():
+            content = md_to_html(src.read_text(encoding="utf-8"))
+            body = f'''
+<section class="bg-navy page-hero" style="padding:72px 0"><div class="wrap"><h1 class="h1 h1--sm">{e(title)}<span class="dot">.</span></h1></div></section>
+<section class="section--md"><div class="wrap legal-body">{content}</div></section>'''
+            desc = {"privacy": "How Global Chef League collects, uses and protects your information.",
+                    "terms": "Global Chef League membership Terms & Conditions, including fees, refunds, competitions and member profiles."}.get(slug, f"Global Chef League {title}.")
+            page(f"{slug}/index.html", title, desc, body)
+            continue
+        if slug == "membership-terms":
+            body = f'''
+<section class="bg-navy page-hero" style="padding:72px 0"><div class="wrap"><h1 class="h1 h1--sm">Membership Terms<span class="dot">.</span></h1></div></section>
+<section class="section--md"><div class="wrap legal-body"><p>Our membership terms are part of the Global Chef League <a href="{{R}}terms/">Terms &amp; Conditions</a>.</p></div></section>
+<script>location.replace("../terms/");</script>'''
+            page(f"{slug}/index.html", "Membership Terms", "Global Chef League membership terms.", body, noindex=True)
+            continue
         if paras:
             content = "".join(f"<p>{e(p)}</p>" for p in paras)
             note = '<p class="sample-note">Draft for review — have your attorney approve before launch.</p>'
