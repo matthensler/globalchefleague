@@ -89,9 +89,9 @@ def cb_home():
             ("Sponsor a Battle", "Put your product at the center of the challenge in front of engaged food lovers.", "Request the Deck", cb_mail("Chef Battle sponsorship deck"))]
     wh = "".join(f'<div class="cb-way"><div class="t">{e(t)}</div><p>{e(b)}</p>{btn(c, h, "secondary", "sm")}</div>' for t, b, c, h in ways)
     body = f'''
-{cb_hero("Chef Battle · A Global Chef League Competition",
+{cb_hero("Chef Battle · Live Cooking Competition",
          'The Heat<br>Is On<span class="dot">.</span>',
-         "Chef Battle is the live culinary competition tour of Global Chef League. Real chefs, real pressure, real crowds, in 20+ markets nationwide.",
+         "Chef Battle is the live cooking competition tour of Global Chef League. Real chefs, real pressure, real crowds, in 20+ markets nationwide.",
          btn("Compete in Chef Battle", "{R}", "primary", "lg") + btn("See How It Works", "#format", "inverse", "lg"),
          "competition-floor.jpg", "Chefs competing on the Chef Battle floor", "center")}
 
@@ -182,9 +182,9 @@ def cb_home():
     <div class="cb-ways">{wh}</div>
   </div>
 </section>'''
-    page("chef-battle/index.html", "Chef Battle — The Live Culinary Competition",
-         "Chef Battle is Global Chef League's live culinary competition tour: real chefs, real pressure, real crowds in 20+ markets. Compete, sponsor, host or bring Chef Battle to your city.",
-         body, active="Chef Battle")
+    page("chef-battle/index.html", "Chef Battle: Live Cooking Competition",
+         "Chef Battle is a live, head-to-head cooking competition where local chefs battle in front of a crowd. Win your city and earn your shot at the World Battle.",
+         body, active="Chef Battle", image="assets/img/share/share-chef-battle.jpg", crumbs=[("Home", ""), ("Chef Battle", "chef-battle/")])
 
 # ------------------------------------------------------------------
 # /chef-battle/nationals/  (merges the old nationals + case-study pages)
@@ -329,9 +329,9 @@ def cb_nationals():
     <div class="btn-row">{btn("Get in Touch", cb_mail("Chef Battle Nationals"), "primary", "lg")}{btn("Become a League Chef", "{R}", "secondary", "lg")}</div>
   </div>
 </section>'''
-    page("chef-battle/nationals/index.html", "Chef Battle Nationals — Las Vegas Recap",
-         "Chef Battle Nationals at Hofbräuhaus Las Vegas: 15 city champions, 3 nights, 500 attendees and one National Champion, Mike Pascua.",
-         body, active="Nationals")
+    page("chef-battle/nationals/index.html", "Chef Battle Nationals: Las Vegas Recap",
+         "Chef Battle Nationals in Las Vegas: 15 city champions, three nights of live competition and one National Champion, Mike Pascua.",
+         body, active="Nationals", image="assets/img/share/share-chef-battle.jpg", crumbs=[("Home", ""), ("Chef Battle", "chef-battle/"), ("Nationals", "chef-battle/nationals/")])
 
 # ------------------------------------------------------------------
 # /chef-battle/operators/
@@ -396,9 +396,9 @@ def cb_operators():
     {btn("Apply Now", OPERATOR_FORM, "primary", "lg", attrs='target="_blank" rel="noopener"')}
   </div>
 </section>'''
-    page("chef-battle/operators/index.html", "Become a Chef Battle Local Operator",
-         "Bring Chef Battle to your city. One operator per market, $149 annual fee, approved event expenses funded, and 30% of event profit.",
-         body, active="Operators")
+    page("chef-battle/operators/index.html", "Bring Chef Battle to Your City | Operator Program",
+         "Bring Chef Battle to your city. One operator per market, $149/year, approved event expenses funded, and 30% of event profit.",
+         body, active="Operators", image="assets/img/share/share-chef-battle.jpg", crumbs=[("Home", ""), ("Chef Battle", "chef-battle/"), ("Operators", "chef-battle/operators/")])
 
 def cb_operators_intl():
     how = [("01", "One per city", "Exclusive Territory", "We're selecting one approved Chef Battle International Operator per market. You become the person leading Chef Battle in your community."),
@@ -465,8 +465,8 @@ def cb_operators_intl():
   </div>
 </section>'''
     page("chef-battle/operators/international/index.html", "Chef Battle International Operator Program",
-         "Bring Chef Battle to your city outside the US. Exclusive territory, 60% of event profit, $999 USD annual operator fee.",
-         body, active="Operators")
+         "Bring Chef Battle to your city outside the US. Exclusive territory, 60% of event profit, $999 USD per year.",
+         body, active="Operators", image="assets/img/share/share-chef-battle.jpg", crumbs=[("Home", ""), ("Chef Battle", "chef-battle/"), ("Operators", "chef-battle/operators/"), ("International", "chef-battle/operators/international/")])
 
 # ------------------------------------------------------------------
 # /chef-battle/team-building/
@@ -580,9 +580,9 @@ def cb_team():
     {btn("Request a Proposal", cb_mail("Corporate Team Building Proposal Request"), "primary", "lg")}
   </div>
 </section>'''
-    page("chef-battle/team-building/index.html", "Corporate Team Building — Chef Battle",
-         "Chef Battle corporate team building: on-site, off-site and private event formats, fully managed end to end. Request a proposal.",
-         body, active="Team Building")
+    page("chef-battle/team-building/index.html", "Chef Battle Corporate Team Building",
+         "Your team deserves more than a happy hour. Chef Battle brings a live cooking competition to your company: on-site, off-site or private, fully managed.",
+         body, active="Team Building", image="assets/img/share/share-chef-battle.jpg", crumbs=[("Home", ""), ("Chef Battle", "chef-battle/"), ("Team Building", "chef-battle/team-building/")])
 
 def chef_battle_pages():
     cb_home(); cb_nationals(); cb_operators(); cb_operators_intl(); cb_team()

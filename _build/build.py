@@ -202,15 +202,21 @@ LANDING_NAV = [("Sample Profile", "#profile"), ("Chef Battle", "chef-battle/"), 
 # (e.g. the Find a Chef directory once there are enough member profiles).
 EXTRA_PAGES = {"directory": False, "membership": False, "about": False, "contact": False}
 
-def page(path, title, desc, body, active=None, noindex=False):
+def page(path, title, desc, body, active=None, noindex=False, image=None, jsonld=None, crumbs=None):
     minimal = LANDING_MODE
     depth = path.count("/")  # "chefs/maria-santos/index.html" -> 2
     r = BASE_PATH if path == "404.html" else "../" * depth
     links = "".join(
         f'<a class="nav-link" href="{r}{href}"{" aria-current=\"page\"" if label == active else ""}>{label}</a>' for label, href in NAV)
     canonical = SITE_URL.rstrip("/") + "/" + path.replace("index.html", "")
-    full_title = title if title.startswith("Global Chef League") else f"{title} | Global Chef League"
+    full_title = title if (title.startswith("Global Chef League") or len(title) + 21 > 65) else f"{title} | Global Chef League"
     robots = '<meta name="robots" content="noindex">' if noindex else ""
+    share = SITE_URL.rstrip("/") + "/" + (image or "assets/img/share/share-gcl.jpg")
+    ld = list(jsonld or [])
+    if crumbs:
+        ld.append({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE_URL.rstrip("/") + "/" + u} for i, (n, u) in enumerate(crumbs)]})
+    ld_html = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>\n' for x in ld)
     body = body.replace("{R}", r)
     if minimal:
         foot_extra = "".join(f'<a href="{r}{h}">{l}</a>' for k, l, h in [("directory", "Find a Chef", "chefs/"), ("membership", "Membership", "membership/"), ("about", "About", "about/"), ("contact", "Contact", "contact/")] if EXTRA_PAGES[k])
@@ -286,6 +292,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <meta property="og:title" content="{e(full_title)}">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{e(canonical)}">
+<meta property="og:image" content="{e(share)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{e(full_title)}">
+<meta name="twitter:description" content="{e(desc)}">
+<meta name="twitter:image" content="{e(share)}">
+{ld_html}
 <meta name="theme-color" content="#0F1E3C">
 <link rel="icon" href="{r}assets/img/gcl-icon.svg" type="image/svg+xml">
 <link rel="preload" href="{r}assets/fonts/montserrat-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -527,7 +541,7 @@ def landing():
     <div class="stack" style="gap:20px">
       <div class="eyebrow">Plus: Chef Battle</div>
       <h2 class="h2">Put Your Skills to the Test<span class="dot">.</span></h2>
-      <p style="font-size:18px">Your membership also makes you eligible for Chef Battle, our live culinary competitions, with no additional entry fees. Compete locally and qualify for the World Battle.</p>
+      <p style="font-size:18px">Your membership also makes you eligible for Chef Battle, our live cooking competitions, with no additional entry fees. Compete locally and qualify for the World Battle.</p>
       {btn("Explore Chef Battle", "{R}chef-battle/", "inverse")}
     </div>
     <div class="path-grid">{path}</div>
@@ -559,8 +573,16 @@ def landing():
   </div>
 </section>
 <script type="application/ld+json">{faq_ld}</script>'''
-    page("index.html", "Global Chef League — Become a League Chef. Get Discovered. Get Booked.",
-         "Get discovered and get booked. Create a League Chef profile in the Global Chef League directory for $25 a year: showcase your experience, list your services and rates, and keep 100% of your bookings.", body)
+    org = {"@context": "https://schema.org", "@type": ["Organization", "SportsOrganization"], "name": "Global Chef League",
+           "url": SITE_URL.rstrip("/") + "/", "logo": SITE_URL.rstrip("/") + "/assets/img/share/share-gcl.jpg", "email": CONTACT_EMAIL,
+           "sport": "Food sport (competitive cooking)",
+           "description": "Global Chef League gives chefs more ways to compete, get discovered and get booked, through Chef Battle live cooking competitions and League Chef profiles.",
+           "subOrganization": [{"@type": "Organization", "name": "Chef Battle", "url": SITE_URL.rstrip("/") + "/chef-battle/"},
+                               {"@type": "Organization", "name": "Chef Relief", "url": SITE_URL.rstrip("/") + "/chef-relief/"}]}
+    site = {"@context": "https://schema.org", "@type": "WebSite", "name": "Global Chef League", "url": SITE_URL.rstrip("/") + "/"}
+    page("index.html", "Global Chef League | Compete. Get Discovered. Get Booked.",
+         "Join Global Chef League for $25/year. Compete in Chef Battle, get your own chef profile, and get booked directly with no booking commissions.",
+         body, jsonld=[org, site])
 
 def directory():
     rows = ""
@@ -697,7 +719,12 @@ def profile(c):
     </aside>
   </div>
 </section>'''
-    page(f"chefs/{c['slug']}/index.html", f"Chef {c['name']}", f"Chef {c['name']}, {c['specialty']} chef in {c['city']}. {c['rate']}. View services and contact the chef directly.", body, active="Find a Chef", noindex=c["sample"] and LANDING_MODE)
+    person = {"@context": "https://schema.org", "@type": "ProfilePage", "mainEntity": {"@type": "Person", "name": f"Chef {c['name']}",
+              "jobTitle": c.get("tagline") or "Chef", "address": {"@type": "PostalAddress", "addressLocality": c["city"].split(",")[0], "addressRegion": c["region"]},
+              "memberOf": {"@type": "Organization", "name": "Global Chef League"},
+              "sameAs": [u for u in [c["website"], c["instagram"], c["facebook"]] if u and u != "#"],
+              **({"image": SITE_URL.rstrip("/") + "/" + c["photo"]} if c.get("photo") else {})}}
+    page(f"chefs/{c['slug']}/index.html", f"Chef {c['name']}", f"Chef {c['name']}, {c['specialty']} chef in {c['city']}. {c['rate']}. View services and contact the chef directly.", body, active="Find a Chef", noindex=c["sample"] and LANDING_MODE, jsonld=[] if c["sample"] else [person], image=c["photo"] or None)
 
 def competitions():
     rows = "".join(f'''<div class="ev-row">
@@ -1038,7 +1065,9 @@ def not_found():
     page("404.html", "Page Not Found", "Page not found.", body, noindex=True)
 
 def sitemap():
-    urls = "".join(f"  <url><loc>{SITE_URL.rstrip('/')}/{p.replace('index.html', '')}</loc></url>\n" for p, ni in PAGES if not ni)
+    import datetime
+    today = datetime.date.today().isoformat()
+    urls = "".join(f"  <url><loc>{SITE_URL.rstrip('/')}/{p.replace('index.html', '')}</loc><lastmod>{today}</lastmod></url>\n" for p, ni in PAGES if not ni)
     (ROOT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
     (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL.rstrip('/')}/sitemap.xml\n")
 

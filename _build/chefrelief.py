@@ -98,6 +98,6 @@ def chef_relief_page():
   </div>
 </section>
 </div>'''
-    page("chef-relief/index.html", "Chef Relief — Emergency Assistance for Chefs",
-         "Chef Relief provides emergency financial assistance to chefs facing unexpected hardship, helping cover essential expenses so they can regain stability and continue their careers.",
-         body, active="Chef Relief")
+    page("chef-relief/index.html", "Chef Relief: Emergency Help for Chefs",
+         "Chef Relief provides emergency financial assistance to chefs facing unexpected hardship, helping cover essential expenses so they can keep cooking.",
+         body, active="Chef Relief", image="assets/img/share/share-chef-relief.jpg", crumbs=[("Home", ""), ("Chef Relief", "chef-relief/")])
