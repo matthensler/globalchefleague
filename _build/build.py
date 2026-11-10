@@ -18,7 +18,7 @@ from pathlib import Path
 # ============================================================
 # 1. SETTINGS — change these
 # ============================================================
-SITE_URL      = "https://globalchefleague.com"    # used for canonical links + sitemap
+SITE_URL      = "https://www.globalchefleague.com"    # used for canonical links + sitemap
 STRIPE_LINK   = "https://buy.stripe.com/aFa4gB5Kd0nX3OP5Y89ws02"
 GTM_ID        = "GTM-PDL674QJ"   # Google Tag Manager container. "" to turn off.
 LANDING_MODE  = True   # True = recruitment landing page only (pre-launch). False = full 9-page site.
@@ -290,7 +290,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <link rel="icon" href="{r}assets/img/gcl-icon.svg" type="image/svg+xml">
 <link rel="preload" href="{r}assets/fonts/montserrat-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{r}assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="{r}assets/css/styles.css">
+<style>{SITE_CSS.replace("../fonts/", r + "assets/fonts/")}</style>
 </head>
 <body>
 {gtm_body}<a class="skip" href="#main">Skip to content</a>
@@ -299,7 +299,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 {body}
 </main>
 {footer}
-<script src="{r}assets/js/site.js" defer></script>
+<script src="{r}assets/js/site.js?v={ASSET_V}" defer></script>
 </body>
 </html>
 """
@@ -309,6 +309,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     PAGES.append((path, noindex))
 
 PAGES = []
+# Version tag added to the CSS/JS links so browsers always load the latest files after an upload.
+import hashlib
+SITE_CSS = (ROOT / "assets/css/styles.css").read_text(encoding="utf-8")
+ASSET_V = hashlib.md5((ROOT / "assets/css/styles.css").read_bytes() + (ROOT / "assets/js/site.js").read_bytes()).hexdigest()[:8]
 
 def chef_by(slug):
     return next(c for c in CHEFS if c["slug"] == slug)
@@ -555,7 +559,7 @@ def landing():
   </div>
 </section>
 <script type="application/ld+json">{faq_ld}</script>'''
-    page("index.html", "Global Chef League — Promote Your Culinary Services | League Chef Directory",
+    page("index.html", "Global Chef League — Become a League Chef. Get Discovered. Get Booked.",
          "Get discovered and get booked. Create a League Chef profile in the Global Chef League directory for $25 a year: showcase your experience, list your services and rates, and keep 100% of your bookings.", body)
 
 def directory():
@@ -956,7 +960,7 @@ LEGAL = {
         "Global Chef League provides an online directory where League Chefs can showcase their experience, services, rates, and contact information.",
         "Chefs listed in the directory operate independently. All inquiries, bookings, payments, and service arrangements are handled directly between the customer and the chef.",
         "Bookings and payments are arranged directly with each chef. Global Chef League does not manage or guarantee services, and does not take a commission on bookings.",
-        "Designations such as League Chef, Chapter President, and League Champion describe a chef's role or recognition within Global Chef League. They are not a guarantee of the quality, safety, licensing, or insurance of any service.",
+        "Designations such as League Chef and League Champion describe a chef's role or recognition within Global Chef League. They are not a guarantee of the quality, safety, licensing, or insurance of any service.",
         "Customers are responsible for confirming a chef's qualifications, licensing, insurance, and availability before booking.",
     ]),
 }

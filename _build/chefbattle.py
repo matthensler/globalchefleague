@@ -76,7 +76,7 @@ def cb_home():
                ("Audience Tasting", "Every attendee samples the dishes and takes part in the verdict."),
                ("Brand Integration", "Sponsored ingredients and activations built into every battle.")]
     pil = "".join(f'<div class="cb-pillar"><div class="t">{e(t)}</div><p>{e(b)}</p></div>' for t, b in pillars)
-    stages = "".join(f'<div class="cb-stage{" cb-stage--gold" if g else ""}"><div class="num">{n}</div><div class="label">Stage {n}</div><div class="t">{e(t)}</div><p>{e(b)}</p></div>' for n, t, b, g in STAGES)
+    stages = "".join(f'<div class="cb-stage{" cb-stage--gold" if g else ""}"><div class="num">{n}</div><div class="t">{e(t)}</div><p>{e(b)}</p></div>' for n, t, b, g in STAGES)
     taste = [("T", "Taste", "Overall flavor, balance, and enjoyment of the dish"), ("A", "Appearance", "Visual presentation and plating artistry"),
              ("S", "Skill", "Execution with precision and professional consistency"), ("T", "Technique", "Command of cooking methods and kitchen craft"),
              ("E", "Execution", "Overall ability to deliver a complete, cohesive dish under pressure")]
