@@ -26,6 +26,22 @@ This is a plain HTML/CSS site with no WordPress and no build step. Upload the fo
 | `assets/` | CSS, JS, fonts, logos |
 | `_build/build.py` | Optional generator (see "Editing" below) |
 
+## Chef Battle section
+
+Chef Battle (formerly chefbattle.events) now lives inside this site:
+
+| Page | Address |
+|---|---|
+| Chef Battle overview | `/chef-battle/` |
+| Nationals recap (merges the old Nationals and Case Study pages) | `/chef-battle/nationals/` |
+| Local Operator Program (US) | `/chef-battle/operators/` |
+| International Operator Program | `/chef-battle/operators/international/` |
+| Corporate Team Building | `/chef-battle/team-building/` |
+
+Copy, prices, operator terms and the two operator application form links live in `_build/chefbattle.py`. Photos and logos are in `assets/img/chef-battle/`.
+
+The separate `chefbattle-events-redirect` package goes in the old chefbattle.events repo, so every old Chef Battle link forwards to its new page here.
+
 ## 1. Put it on GitHub Pages
 
 1. Create a new repository on GitHub, e.g. `globalchefleague-site`.
@@ -61,7 +77,7 @@ Until you replace them, the forms show a "not connected yet" message and the joi
 - **Legal text.** The Membership Terms, Privacy and Website Terms pages are placeholders. The Directory Disclaimer has draft wording. Have your attorney supply or approve all four.
 - **Fonts.** Montserrat, Barlow, Barlow Condensed and Big Shoulders Display are free stand-ins and are self-hosted in `assets/fonts/`. When you license the final fonts, drop in the files and update the `@font-face` lines at the top of `assets/css/styles.css`.
 - **Logo.** The logos in `assets/img/` were traced from the brand guidelines PDF as vectors. Swap in the master artwork files when you have them, keeping the same file names.
-- **Contact email.** `chefbattle@hoptoit.events` appears on the Contact page. Change it if needed.
+- **Contact email.** `hello@globalchefleague.com` appears on the Contact page. Change it if needed.
 
 ## Editing
 

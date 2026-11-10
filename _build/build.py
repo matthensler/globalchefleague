@@ -24,7 +24,7 @@ GTM_ID        = "GTM-PDL674QJ"   # Google Tag Manager container. "" to turn off.
 LANDING_MODE  = True   # True = recruitment landing page only (pre-launch). False = full 9-page site.
 FORM_CONTACT  = "https://formspree.io/f/REPLACE_CONTACT_FORM_ID"
 FORM_PROFILE  = "https://formspree.io/f/REPLACE_PROFILE_FORM_ID"
-CONTACT_EMAIL = "chefbattle@hoptoit.events"
+CONTACT_EMAIL = "hello@globalchefleague.com"
 BASE_PATH     = "/"   # site root path. "/" for a custom domain (globalchefleague.com).
                       # For a github.io project URL use "/REPO-NAME/". Only the 404 page uses this.
 YEAR          = "2026"
@@ -33,8 +33,8 @@ YEAR          = "2026"
 # 2. CONTENT DATA
 # ============================================================
 SERVICES = ["Private dining", "Catering and special events", "Cooking classes", "Corporate events", "Culinary experiences"]
-ROLES = ["League Chef", "Chapter President", "League Champion"]
-TOPICS = ["League Chef membership", "Chef profiles", "Competitions", "Chapters", "Partnerships"]
+ROLES = ["League Chef", "League Champion"]
+TOPICS = ["League Chef membership", "Chef profiles", "Chef Battle", "Sponsorships & partnerships", "Other"]
 COUNTRIES = ["United States", "Canada", "Mexico", "United Kingdom", "Other"]
 
 # Sample chefs — illustrative only. Replace with real members.
@@ -109,7 +109,7 @@ EVENTS = [
     dict(date="NOV 14", short="Nov 14", city="Pasadena", place="Pasadena, California", stage="City Battle", status="Applications open", apply="contact/?topic=Competitions"),
     dict(date="DEC 05", short="Dec 05", city="Las Vegas", place="Las Vegas, Nevada", stage="City Battle", status="Applications open", apply="contact/?topic=Competitions"),
     dict(date="JAN 23", short="Jan 23", city="Miami", place="Miami, Florida", stage="City Battle", status="Opening soon", apply="contact/?topic=Competitions"),
-    dict(date="MAR 06", short="Mar 06", city="Chicago", place="Chicago, Illinois", stage="Regional Showdown", status="Qualifiers only", apply="contact/?topic=Competitions"),
+    dict(date="MAR 06", short="Mar 06", city="Chicago", place="Chicago, Illinois", stage="City Battle", status="Opening soon", apply="contact/?topic=Competitions"),
 ]
 
 PILLARS = [
@@ -117,7 +117,7 @@ PILLARS = [
     ("02", "Get Discovered", "Create your own League Chef profile to showcase your experience, specialties, and culinary services."),
     ("03", "Get Booked", "Promote your rates and contact information so customers can reach you directly. No booking commissions or middlemen."),
 ]
-PATH = [("01", "Compete locally", "Chef Battle city events", ""), ("02", "Advance regionally", "Chef Battle regional showdowns", ""), ("03", "Qualify for the World Battle", "World Chef Cup", "gold")]
+PATH = [("01", "Compete locally", "Chef Battle city events", ""), ("02", "Qualify for the World Battle", "World Chef Cup", "gold")]
 INCLUDES = [
     ("01", "Compete in Chef Battle", "Apply to compete in official Chef Battle events around the world without additional competition entry fees. Competition spots are limited and selection is not guaranteed."),
     ("02", "Get Your Own League Chef Profile", "Showcase your experience, photos, specialties, and culinary services on your own public profile."),
@@ -141,7 +141,7 @@ FAQS = [
     ("Does membership renew automatically?", "Yes. Membership renews annually unless canceled before the next renewal date."),
     ("Can I cancel my membership?", "Yes. You can cancel future renewals through the subscription management link provided. Your membership remains active through the paid term, subject to the Membership Terms."),
     ("Can I get a refund?", "No. All sales are final. Membership fees are non-refundable, including for any unused part of a membership year. You can cancel future renewals at any time, and your membership stays active through the end of the term you paid for."),
-    ("When will my profile be created?", "Your profile is created only after you submit your profile information. After checkout you'll be sent to the profile form, where you add your photo, bio, services, rates and contact details. Once we receive your submission and verify your membership, we'll create and publish your profile. If you don't submit your information, we can't create your profile."),
+    ("When will my profile be created?", "Your profile is created only after you submit your profile information. After checkout we'll email you a link to our profile form, where you add your photo, bio, services, rates and contact details. Once we receive your submission and verify your membership, we'll create and publish your profile. If you don't submit your information, we can't create your profile."),
 ]
 ROLE_CARDS = [
     ("League Chef", "", "League Chefs", "The heart of Global Chef League. Culinary professionals who showcase their skills, promote their services, and participate in the league."),
@@ -196,6 +196,11 @@ def btn(label, href, kind="primary", size="", block=False, attrs=""):
     return f'<a class="{cls}" href="{e(href)}" {attrs}>{e(label)}</a>'
 
 NAV = [("Find a Chef", "chefs/"), ("Competitions", "competitions/"), ("Membership", "membership/"), ("About", "about/")]
+# Navigation while the site is in landing (recruitment) mode
+LANDING_NAV = [("Sample Profile", "#profile"), ("Chef Battle", "chef-battle/"), ("Chef Relief", "chef-relief/")]
+# Extra pages to publish alongside the landing page. Turn on when ready
+# (e.g. the Find a Chef directory once there are enough member profiles).
+EXTRA_PAGES = {"directory": False, "membership": False, "about": False, "contact": False}
 
 def page(path, title, desc, body, active=None, noindex=False):
     minimal = LANDING_MODE
@@ -208,17 +213,25 @@ def page(path, title, desc, body, active=None, noindex=False):
     robots = '<meta name="robots" content="noindex">' if noindex else ""
     body = body.replace("{R}", r)
     if minimal:
+        foot_extra = "".join(f'<a href="{r}{h}">{l}</a>' for k, l, h in [("directory", "Find a Chef", "chefs/"), ("membership", "Membership", "membership/"), ("about", "About", "about/"), ("contact", "Contact", "contact/")] if EXTRA_PAGES[k])
+        llinks = "".join(
+            f'<a class="nav-link" href="{r}{href}"{" aria-current=\"page\"" if label == active else ""}>{label}</a>' for label, href in LANDING_NAV)
         header = f'''<header class="site-header">
   <div class="wrap">
     <a class="brand" href="{r or './'}" aria-label="Global Chef League home"><img src="{r}assets/img/gcl-logo-horizontal.svg" alt="Global Chef League" width="285" height="28"></a>
-    <div class="head-cta"><span class="head-price">League Chef · $25/Year</span><a class="btn btn--primary btn--sm" href="{e(STRIPE_LINK)}">Join Now</a></div>
+    <button class="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Menu"><span></span><span></span><span></span></button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      {llinks}
+      <a class="btn btn--primary btn--sm" href="{e(STRIPE_LINK)}">Join Now</a>
+    </nav>
   </div>
 </header>'''
         footer = f'''<footer class="site-footer">
   <div class="wrap">
-    <div class="foot-grid foot-grid--min">
+    <div class="foot-grid">
       <div><img src="{r}assets/img/gcl-logo-stacked-white.svg" alt="Global Chef League" width="115" height="96"><p class="foot-tag">Compete. Get Discovered. Get Booked.</p></div>
-      <div class="foot-col"><div class="eyebrow">Join the League</div><a href="{e(STRIPE_LINK)}">Become a League Chef — $25/Year</a><a href="{r}#profile">See a Sample Profile</a><a href="{r}#faq">FAQ</a></div>
+      <div class="foot-col"><div class="eyebrow">The League</div><a href="{e(STRIPE_LINK)}">Become a League Chef — $25/Year</a><a href="{r}#profile">See a Sample Profile</a><a href="{r}#faq">FAQ</a>{foot_extra}</div>
+      <div class="foot-col"><div class="eyebrow">Programs</div><a href="{r}chef-battle/">Chef Battle</a><a href="{r}chef-battle/nationals/">Chef Battle Nationals</a><a href="{r}chef-relief/">Chef Relief</a></div>
       <div class="foot-col"><div class="eyebrow">Questions</div><a href="mailto:{e(CONTACT_EMAIL)}">{e(CONTACT_EMAIL)}</a><a href="{r}terms/">Terms &amp; Conditions</a><a href="{r}privacy/">Privacy Policy</a></div>
     </div>
     <div class="foot-bottom"><span>© <span id="year">{YEAR}</span> Global Chef League</span><span>GlobalChefLeague.com</span></div>
@@ -510,7 +523,8 @@ def landing():
     <div class="stack" style="gap:20px">
       <div class="eyebrow">Plus: Chef Battle</div>
       <h2 class="h2">Put Your Skills to the Test<span class="dot">.</span></h2>
-      <p style="font-size:18px">Your membership also makes you eligible for Chef Battle, our live culinary competitions, with no additional entry fees. Compete locally, advance regionally, and qualify for the World Battle.</p>
+      <p style="font-size:18px">Your membership also makes you eligible for Chef Battle, our live culinary competitions, with no additional entry fees. Compete locally and qualify for the World Battle.</p>
+      {btn("Explore Chef Battle", "{R}chef-battle/", "inverse")}
     </div>
     <div class="path-grid">{path}</div>
   </div>
@@ -546,11 +560,13 @@ def landing():
 
 def directory():
     rows = ""
-    for c in CHEFS:
+    listed = MEMBERS + ([] if LANDING_MODE else CHEFS)
+    has_samples = any(c.get("sample", True) for c in listed)
+    for c in listed:
         roles = [c["primary_role"]] + c["achievements"]
         rows += f'''<div class="dir-row" data-name="{e(c["name"])}" data-city="{e(c["city"])}" data-specialty="{e(c["specialty"] + " " + " ".join(c["specialties"]))}" data-services="{e("|".join(s for s, _ in c["services"]))}" data-roles="{e("|".join(roles))}">
   <span class="dir-no">{c["no"]}</span>
-  <div class="dir-chef"><div class="dir-thumb">{ph("", True)}</div><div><a class="dir-name" href="{{R}}chefs/{c["slug"]}/">Chef {e(c["name"])}</a>{chef_badges(c)}</div></div>
+  <div class="dir-chef"><div class="dir-thumb">{(f'<div class="ph ph--light"><img src="{{R}}{e(c["photo"])}" alt="" style="object-position:{c.get("photo_pos", "center")}"></div>') if c.get("photo") else ph("", True)}</div><div><a class="dir-name" href="{{R}}chefs/{c["slug"]}/">Chef {e(c["name"])}</a>{chef_badges(c)}</div></div>
   <span class="dir-cell"><span class="k">Location</span>{e(c["city"])}</span>
   <span class="dir-cell"><span class="k">Specialty</span>{e(c["specialty"])}</span>
   <span class="dir-cell c-rate"><span class="k">Starting rate</span>{e(c["rate"])}</span>
@@ -574,15 +590,15 @@ def directory():
       <button class="btn btn--primary btn--lg" type="submit">Search</button>
     </form>
     <div class="filter-tags"><span class="label">Find chefs offering:</span>{tags}</div>
-    <div class="dir-count">Explore Our League Chefs · <span id="dir-count-n">{len(CHEFS)} profiles</span></div>
+    <div class="dir-count">Explore Our League Chefs · <span id="dir-count-n">{len(listed)} profile{"" if len(listed) == 1 else "s"}</span></div>
     <div class="dir" id="directory">
       <div class="dir-row dir-head"><span>No.</span><span>Chef</span><span>Location</span><span>Specialty</span><span class="c-rate">Starting rate</span><span></span></div>
       {rows}
     </div>
     <p class="dir-empty" id="dir-empty">No chefs match that search yet. Try a different city, specialty, or service.</p>
-    <p class="legal" style="margin-top:20px">Illustrative profiles; not actual GCL members.</p>
+    {'<p class="legal" style="margin-top:20px">Illustrative profiles; not actual GCL members.</p>' if has_samples else '<p class="legal" style="margin-top:20px">New League Chef profiles are added as members join.</p>'}
     <div class="cta-band" style="margin-top:72px">
-      <div class="stack"><h2 class="h2">Are You a Chef?</h2><p style="font-size:18px">Join Global Chef League, create your own League Chef profile, and promote your services to potential customers.</p></div>
+      <div class="stack"><h2 class="h2">Are You a Chef?</h2><p style="font-size:18px">Join Global Chef League, create your own League Chef profile, and promote your services to customers looking for culinary talent.</p></div>
       {btn(CTA_JOIN, STRIPE_LINK, "primary", "lg")}
     </div>
     <p class="legal" style="margin-top:24px">Bookings and payments are arranged directly with each chef. Global Chef League does not manage or guarantee services.</p>
@@ -641,7 +657,7 @@ def profile(c):
         gal = f'<div class="gallery">{ph("Signature dish", True)}{ph("Event photo", True)}{ph("Event photo", True)}</div>'
     else:
         gal = ""
-    crumbs = (f'League Chef / {e(c["region"])}' if LANDING_MODE else f'<a href="{{R}}chefs/">Find a Chef</a> / {e(c["region"])}')
+    crumbs = (f'<a href="{{R}}chefs/">Find a Chef</a> / {e(c["region"])}' if (EXTRA_PAGES["directory"] or not LANDING_MODE) else f'League Chef / {e(c["region"])}')
     body = f'''
 <section class="bg-navy profile-hero">
   <div class="wrap profile-grid">
@@ -732,13 +748,14 @@ def competitions():
     {btn(CTA_JOIN, STRIPE_LINK, "primary", "lg")}
   </div>
 </section>'''
-    page("competitions/index.html", "Competitions", "Compete in Chef Battle city events and regional showdowns, and qualify for the World Chef Cup. See upcoming competitions and apply.", body, active="Competitions")
+    page("competitions/index.html", "Competitions", "Compete in Chef Battle city events and qualify for the World Chef Cup. See upcoming competitions and apply.", body, active="Competitions")
 
 def membership():
     inc = "".join(f'<div class="inc"><div class="num">{n}</div><div class="t">{e(t)}</div><p>{e(b)}</p></div>' for n, t, b in INCLUDES)
-    gl = "".join(f'<div class="glance-row"><span class="b">{e(b)}</span><span class="d{" hi" if hi else ""}">{e(d)}</span></div>' for b, d, hi in GLANCE)
-    fq = "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in FAQS)
-    faq_ld = json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQS]})
+    gl = "".join(f'<div class="glance-row"><span class="b">{e(b)}</span><span class="d{" hi" if hi else ""}">{e(d)}</span></div>' for b, d, hi in GLANCE if "Chapter" not in b)
+    faqs = [f for f in FAQS if "Chapter President" not in f[0]]
+    fq = "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
+    faq_ld = json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faqs]})
     body = f'''
 <section class="bg-bone page-hero">
   <div class="wrap hero-grid mem-grid">
@@ -752,6 +769,7 @@ def membership():
       <div class="price-big" aria-label="$25 per year"><span class="cur">$</span><span class="amt">25</span><span class="per">/YEAR</span></div>
       <div class="note">No additional Chef Battle competition entry fees. No booking commissions.</div>
       {btn(CTA_JOIN, STRIPE_LINK, "primary", "lg", block=True)}
+      <p class="legal">Renews yearly; cancel anytime. All sales final. See our <a href="{{R}}terms/" style="color:inherit">Terms &amp; Conditions</a>.</p>
     </div>
   </div>
 </section>
@@ -773,14 +791,14 @@ def membership():
       <h2 class="h2">Join Today for $25/Year</h2>
       <p style="font-size:18px">Become an official League Chef with one annual membership.</p>
       <p style="font-size:18px">No additional Chef Battle competition entry fees. No booking commissions.</p>
-      <p class="legal" style="margin-top:8px">Membership renews automatically each year unless canceled. Competition participation is subject to eligibility, selection, and availability.</p>
+      <p class="legal" style="margin-top:8px">Membership renews automatically each year unless canceled. All sales are final. Your profile is created after you submit your profile information. Competition participation is subject to eligibility, selection, and availability.</p>
     </div>
     {btn(CTA_JOIN, STRIPE_LINK, "primary", "lg")}
   </div>
 </section>
 <section class="section" id="faq">
   <div class="wrap side-grid">
-    <div class="stack"><h2 class="h2 h2--sm">Frequently Asked Questions<span class="dot">.</span></h2><div class="rule"></div></div>
+    <div class="stack"><h2 class="h2 h2--sm">Frequently Asked Questions<span class="dot">.</span></h2><div class="rule"></div><p>Still have questions? <a href="{{R}}contact/">Contact us</a>.</p></div>
     <div class="faq">{fq}</div>
   </div>
 </section>
@@ -788,7 +806,7 @@ def membership():
     page("membership/index.html", "Membership — $25/Year", "Become a League Chef for $25 a year: a public chef profile, no Chef Battle entry fees, and 0% booking commissions.", body, active="Membership")
 
 def about():
-    roles = "".join(f'<div class="role {rc}">{badge(b)}<div class="t">{e(t)}</div><p>{e(d)}</p></div>' for b, rc, t, d in ROLE_CARDS)
+    roles = "".join(f'<div class="role {rc}">{badge(b)}<div class="t">{e(t)}</div><p>{e(d)}</p></div>' for b, rc, t, d in ROLE_CARDS if b != "Chapter President")
     body = f'''
 <section class="section--md">
   <div class="wrap about-intro">
@@ -800,12 +818,12 @@ def about():
     </div>
   </div>
 </section>
-<div class="wrap"><div class="wide-photo">{ph("Chef Battle crowd and judges")}</div></div>
+<div class="wrap"><div class="wide-photo pic"><img src="{{R}}assets/img/chef-battle/competition-floor.jpg" alt="Chefs competing at a Chef Battle event" style="object-position:center 40%"></div></div>
 <section class="section">
   <div class="wrap">
-    {head_block("Our League", eyebrow="League Roles & Local Chapters")}
-    <div class="grid g-3" style="margin-bottom:56px">{roles}</div>
-    {btn("Become a League Chef", "{R}membership/", "primary", "lg")}
+    {head_block("Our League", eyebrow="League Roles")}
+    <div class="grid g-2" style="margin-bottom:56px">{roles}</div>
+    <div class="btn-row">{btn("Become a League Chef", "{R}membership/", "primary", "lg")}{btn("Explore Chef Battle", "{R}chef-battle/", "secondary", "lg")}</div>
   </div>
 </section>'''
     page("about/index.html", "About", "Global Chef League brings the excitement, prestige and community of professional sports to the culinary industry through Chef Battle, the World Chef Cup and our chef directory.", body, active="About")
@@ -815,12 +833,12 @@ def contact():
 <div class="contact-split">
   <section class="bg-navy left">
     <h1 class="h1 h1--sm">Get in Touch<span class="dot">.</span></h1>
-    <p>Have a question about League Chef membership, chef profiles, competitions, chapters, or partnerships?</p>
+    <p>Have a question about League Chef membership, chef profiles, Chef Battle, or sponsorships and partnerships?</p>
     <p>Send us a message and we'll be happy to help.</p>
     <p class="legal" style="margin-top:auto">Or email <a href="mailto:{e(CONTACT_EMAIL)}" style="color:#fff">{e(CONTACT_EMAIL)}</a></p>
   </section>
   <section class="right">
-    <form action="{e(FORM_CONTACT)}" method="POST" data-ajax data-success="Thanks! Your message has been sent. We'll get back to you soon." class="stack-lg" style="align-items:stretch">
+    <form action="{e(FORM_CONTACT)}" method="POST" data-ajax data-mailto="{e(CONTACT_EMAIL)}" data-success="Thanks! Your message has been sent. We'll get back to you soon." class="stack-lg" style="align-items:stretch">
       <input type="hidden" name="_subject" value="GCL website — contact form">
       <input type="text" name="_gotcha" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="form-grid">
@@ -837,10 +855,10 @@ def contact():
 <script>
 (function(){{var t=new URLSearchParams(location.search).get('topic');if(t){{var s=document.getElementById('c-topic');for(var i=0;i<s.options.length;i++){{if(s.options[i].text===t){{s.selectedIndex=i}}}}}}}})();
 </script>'''
-    page("contact/index.html", "Contact", "Questions about League Chef membership, chef profiles, competitions, chapters or partnerships? Contact Global Chef League.", body)
+    page("contact/index.html", "Contact", "Questions about League Chef membership, chef profiles, Chef Battle or partnerships? Contact Global Chef League.", body, active="Contact")
 
 def welcome():
-    steps = [("01", "Membership purchased", "done"), ("02", "Submit your profile", "now"), ("03", "We verify your membership", ""), ("04", "Profile published in the directory", "")]
+    steps = [("01", "Membership purchased", "done"), ("02", "Watch for our email with your profile form", "now"), ("03", "Submit your profile information", ""), ("04", "We verify and publish your profile", "")]
     st = "".join(f'<div class="step {c}"><span class="num">{n}</span><span class="t">{e(t)}</span><span class="tick">{"✓" if c == "done" else ""}</span></div>' for n, t, c in steps)
     body = f'''
 <section class="section--md bg-bone">
@@ -849,9 +867,9 @@ def welcome():
       <span class="badge badge--brand badge--capsule">Thanks for joining!</span>
       <h1 class="h1 h1--sm">You're In! Welcome to Global Chef League<span class="dot">.</span></h1>
       <p class="lead">You're officially on your way to becoming a published League Chef.</p>
-      <p class="body-lg">Now it's time to create your professional profile so people can discover you and your services.</p>
-      <p class="body-lg">Add your photo, experience, specialties, rates, and contact information. Once your membership is verified and your profile is approved, we'll publish it in the directory.</p>
-      {btn("Create My League Chef Profile", "{R}submit-profile/", "primary", "lg")}
+      <p class="body-lg">Next, we'll email you a link to our profile form. Keep an eye on your inbox, and check your spam or promotions folder if you don't see it.</p>
+      <p class="body-lg">On the form you'll add your photo, experience, specialties, rates, and contact information. Once we receive it and verify your membership, we'll create and publish your League Chef profile.</p>
+      <p class="body-lg">Questions in the meantime? Email <a href="mailto:{e(CONTACT_EMAIL)}">{e(CONTACT_EMAIL)}</a>.</p>
     </div>
     <div class="stack-lg" style="align-items:stretch">
       <div class="steps">{st}</div>
@@ -859,7 +877,7 @@ def welcome():
     </div>
   </div>
 </section>'''
-    page("welcome/index.html", "Welcome to the League", "Thanks for joining Global Chef League. Create your League Chef profile.", body, noindex=True)
+    page("welcome/index.html", "Welcome to the League", "Thanks for joining Global Chef League. Watch your email for your profile form.", body, noindex=True)
 
 def submit_profile():
     secs = [("01", "The Basics", "basics"), ("02", "Your Cooking", "cooking"), ("03", "Rates & Contact", "rates")]
@@ -1020,13 +1038,23 @@ def sitemap():
     (ROOT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
     (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL.rstrip('/')}/sitemap.xml\n")
 
+exec(open(Path(__file__).parent / "chefbattle.py", encoding="utf-8").read())
+exec(open(Path(__file__).parent / "chefrelief.py", encoding="utf-8").read())
+
 if __name__ == "__main__":
     if LANDING_MODE:
-        landing(); welcome(); submit_profile(); legal_pages(); not_found()
+        landing(); welcome(); legal_pages(); not_found()
         for m in MEMBERS: profile(m)
+        if EXTRA_PAGES["directory"]: directory()
+        if EXTRA_PAGES["membership"]: membership()
+        if EXTRA_PAGES["about"]: about()
+        if EXTRA_PAGES["contact"]: contact()
+        chef_battle_pages()
+        chef_relief_page()
     else:
         home(); directory()
         for c in MEMBERS + CHEFS: profile(c)
         competitions(); membership(); about(); contact(); welcome(); submit_profile(); legal_pages(); not_found()
+        chef_battle_pages()
     sitemap()
     print(f"Built {len(PAGES)} pages into {ROOT}")

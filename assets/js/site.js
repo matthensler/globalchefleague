@@ -92,7 +92,17 @@
       }
       if (form.action.indexOf('REPLACE_') > -1) {
         e.preventDefault();
-        show(msg, 'err', 'This form is not connected yet. Site owner: add your Formspree form ID (see README).');
+        // No form service connected yet: hand the message to the visitor's email app instead.
+        if (form.dataset.mailto) {
+          var get = function (n) { var f = form.querySelector('[name="' + n + '"]'); return f ? f.value.trim() : ''; };
+          var topic = get('topic');
+          var subject = 'Website inquiry' + (topic ? ': ' + topic : '') + ' (' + get('name') + ')';
+          var body = get('message') + '\n\n' + get('name') + '\n' + get('email');
+          window.location.href = 'mailto:' + form.dataset.mailto + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+          show(msg, 'ok', 'Your email app should open with your message ready to send. If it doesn’t, email us at ' + form.dataset.mailto + '.');
+          return;
+        }
+        show(msg, 'err', 'This form is not connected yet. Please email us instead.');
         return;
       }
       e.preventDefault();

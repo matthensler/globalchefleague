@@ -11,13 +11,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Welcome to the League | Global Chef League</title>
-<meta name="description" content="Thanks for joining Global Chef League. Create your League Chef profile.">
+<meta name="description" content="Thanks for joining Global Chef League. Watch your email for your profile form.">
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://globalchefleague.com/welcome/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Global Chef League">
 <meta property="og:title" content="Welcome to the League | Global Chef League">
-<meta property="og:description" content="Thanks for joining Global Chef League. Create your League Chef profile.">
+<meta property="og:description" content="Thanks for joining Global Chef League. Watch your email for your profile form.">
 <meta property="og:url" content="https://globalchefleague.com/welcome/">
 <meta name="theme-color" content="#0F1E3C">
 <link rel="icon" href="../assets/img/gcl-icon.svg" type="image/svg+xml">
@@ -34,7 +34,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="../" aria-label="Global Chef League home"><img src="../assets/img/gcl-logo-horizontal.svg" alt="Global Chef League" width="285" height="28"></a>
-    <div class="head-cta"><span class="head-price">League Chef · $25/Year</span><a class="btn btn--primary btn--sm" href="https://buy.stripe.com/aFa4gB5Kd0nX3OP5Y89ws02">Join Now</a></div>
+    <button class="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Menu"><span></span><span></span><span></span></button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <a class="nav-link" href="../#profile">Sample Profile</a><a class="nav-link" href="../chef-battle/">Chef Battle</a><a class="nav-link" href="../chef-relief/">Chef Relief</a>
+      <a class="btn btn--primary btn--sm" href="https://buy.stripe.com/aFa4gB5Kd0nX3OP5Y89ws02">Join Now</a>
+    </nav>
   </div>
 </header>
 <main id="main">
@@ -45,12 +49,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <span class="badge badge--brand badge--capsule">Thanks for joining!</span>
       <h1 class="h1 h1--sm">You're In! Welcome to Global Chef League<span class="dot">.</span></h1>
       <p class="lead">You're officially on your way to becoming a published League Chef.</p>
-      <p class="body-lg">Now it's time to create your professional profile so people can discover you and your services.</p>
-      <p class="body-lg">Add your photo, experience, specialties, rates, and contact information. Once your membership is verified and your profile is approved, we'll publish it in the directory.</p>
-      <a class="btn btn--primary btn--lg" href="../submit-profile/" >Create My League Chef Profile</a>
+      <p class="body-lg">Next, we'll email you a link to our profile form. Keep an eye on your inbox, and check your spam or promotions folder if you don't see it.</p>
+      <p class="body-lg">On the form you'll add your photo, experience, specialties, rates, and contact information. Once we receive it and verify your membership, we'll create and publish your League Chef profile.</p>
+      <p class="body-lg">Questions in the meantime? Email <a href="mailto:hello@globalchefleague.com">hello@globalchefleague.com</a>.</p>
     </div>
     <div class="stack-lg" style="align-items:stretch">
-      <div class="steps"><div class="step done"><span class="num">01</span><span class="t">Membership purchased</span><span class="tick">✓</span></div><div class="step now"><span class="num">02</span><span class="t">Submit your profile</span><span class="tick"></span></div><div class="step "><span class="num">03</span><span class="t">We verify your membership</span><span class="tick"></span></div><div class="step "><span class="num">04</span><span class="t">Profile published in the directory</span><span class="tick"></span></div></div>
+      <div class="steps"><div class="step done"><span class="num">01</span><span class="t">Membership purchased</span><span class="tick">✓</span></div><div class="step now"><span class="num">02</span><span class="t">Watch for our email with your profile form</span><span class="tick"></span></div><div class="step "><span class="num">03</span><span class="t">Submit your profile information</span><span class="tick"></span></div><div class="step "><span class="num">04</span><span class="t">We verify and publish your profile</span><span class="tick"></span></div></div>
       <div class="stack" style="gap:14px"><p>Watch your email for league updates and the first Chef Battle competition announcements.</p></div>
     </div>
   </div>
@@ -58,10 +62,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </main>
 <footer class="site-footer">
   <div class="wrap">
-    <div class="foot-grid foot-grid--min">
+    <div class="foot-grid">
       <div><img src="../assets/img/gcl-logo-stacked-white.svg" alt="Global Chef League" width="115" height="96"><p class="foot-tag">Compete. Get Discovered. Get Booked.</p></div>
-      <div class="foot-col"><div class="eyebrow">Join the League</div><a href="https://buy.stripe.com/aFa4gB5Kd0nX3OP5Y89ws02">Become a League Chef — $25/Year</a><a href="../#profile">See a Sample Profile</a><a href="../#faq">FAQ</a></div>
-      <div class="foot-col"><div class="eyebrow">Questions</div><a href="mailto:chefbattle@hoptoit.events">chefbattle@hoptoit.events</a><a href="../terms/">Terms &amp; Conditions</a><a href="../privacy/">Privacy Policy</a></div>
+      <div class="foot-col"><div class="eyebrow">The League</div><a href="https://buy.stripe.com/aFa4gB5Kd0nX3OP5Y89ws02">Become a League Chef — $25/Year</a><a href="../#profile">See a Sample Profile</a><a href="../#faq">FAQ</a></div>
+      <div class="foot-col"><div class="eyebrow">Programs</div><a href="../chef-battle/">Chef Battle</a><a href="../chef-battle/nationals/">Chef Battle Nationals</a><a href="../chef-relief/">Chef Relief</a></div>
+      <div class="foot-col"><div class="eyebrow">Questions</div><a href="mailto:hello@globalchefleague.com">hello@globalchefleague.com</a><a href="../terms/">Terms &amp; Conditions</a><a href="../privacy/">Privacy Policy</a></div>
     </div>
     <div class="foot-bottom"><span>© <span id="year">2026</span> Global Chef League</span><span>GlobalChefLeague.com</span></div>
   </div>
