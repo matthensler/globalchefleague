@@ -459,7 +459,7 @@ def cb_operators_intl():
 <section class="section--band">
   <div class="wrap">
     <div class="eyebrow" style="margin-bottom:20px">The Terms</div>
-    {terms(T + [("Opportunity", "To grow with Hop To It")], "There are no guaranteed earnings. Your compensation is based on the actual financial performance of your event. *$149 USD annual operator fee is per approved market. All market territories, geographic boundaries and regional limits are defined by Chef Battle.")}
+    {terms(T, "There are no guaranteed earnings. Your compensation is based on the actual financial performance of your event. *$149 USD annual operator fee is per approved market. All market territories, geographic boundaries and regional limits are defined by Chef Battle.")}
   </div>
 </section>
 

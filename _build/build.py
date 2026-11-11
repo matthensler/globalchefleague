@@ -99,6 +99,21 @@ MEMBERS = [
          website="https://www.moyas-maison-de-sabor.com", instagram="https://www.instagram.com/chefmoya1/", facebook="", booking="",
          photo="assets/img/chefs/hector-moya.jpg", photo_pos="center 22%",
          gallery=["assets/img/chefs/hector-moya-1.jpg"]),
+    dict(slug="matt-neary", no="02", name="Matt Neary", sample=False,
+         tagline="Louisville Chapter President",
+         city="Louisville, Kentucky", region="Kentucky",
+         primary_role="Chapter President", achievements=[], titles=[], chapter="Louisville",
+         specialty="Fresh Pasta", rate="", stat_rate="", area="Louisville",
+         bio=("Chef Matt brings a modern, imaginative approach to the culinary arts, pairing bold flavors with thoughtful technique and refined presentation. "
+              "His creativity shines through unexpected ingredient combinations, contrasting textures, and fresh interpretations of familiar dishes.\n\n"
+              "With a passion for fine dining and a drive to keep exploring, Matt approaches each plate as an opportunity to express his perspective. "
+              "His culinary style balances precision with personality, creating food that is visually striking, full of flavor, and distinctly his own."),
+         services=[(x, "Contact for Pricing") for x in ["Private dining", "Catering and special events", "Cooking classes", "Corporate events", "Culinary experiences"]],
+         specialties=["Modern Cuisine", "Wood-Fired & Open Fire", "Tasting Menus", "Fresh Pasta", "Pizza"],
+         email="louisville@globalchefleague.com", phone="", phone_display="",
+         website="", instagram="", facebook="", booking="",
+         photo="assets/img/chefs/matt-neary.jpg", photo_pos="center 20%",
+         gallery=[]),
 ]
 
 # Which chef is featured in the home hero card
@@ -636,11 +651,11 @@ def profile(c):
     c = dict(dict(sample=True, tagline="", phone_display="", facebook="", photo="", photo_pos="center 25%", gallery=[], extra_stat=None), **c)
     first = c["name"].split()[0]
     rest = " ".join(c["name"].split()[1:])
-    stats = [("Starting at", c["stat_rate"], "")]
-    if c["area"]: stats.append(("Service area", c["area"], ""))
-    if c["primary_role"] == "Chapter President" and c["chapter"] and not LANDING_MODE:
-        stats.append(("Chapter", c["chapter"], ""))
-    elif c["titles"]:
+    is_cp = c["primary_role"] == "Chapter President" and c["chapter"] and (not LANDING_MODE or not c["sample"])
+    stats = [("Starting at", c["stat_rate"], "")] if c["stat_rate"] else []
+    if is_cp: stats.append(("Chapter", c["chapter"], ""))
+    if c["area"] and not (is_cp and c["area"] == c["chapter"]): stats.append(("Service area", c["area"], ""))
+    if c["titles"]:
         stats.append(("Title", c["titles"][0], "gold sm"))
     else:
         stats.append(("Specialty", c["specialty"], ""))
@@ -648,7 +663,7 @@ def profile(c):
     svcs = "".join(f'<div class="svc"><span class="n">{e(n)}</span><span class="r">{e(r)}</span></div>' for n, r in c["services"])
     specs = "".join(f'<span class="badge badge--wash">{e(x)}</span>' for x in c["specialties"])
     roles = [c["primary_role"]] + c["achievements"]
-    if LANDING_MODE:
+    if LANDING_MODE and c["sample"]:
         roles = [r for r in roles if r != "Chapter President"] or ["League Chef"]
     if "League Chef" not in roles: roles.append("League Chef")
     badges_hdr = "".join(badge(l, True) for l in roles)
@@ -724,7 +739,7 @@ def profile(c):
               "memberOf": {"@type": "Organization", "name": "Global Chef League"},
               "sameAs": [u for u in [c["website"], c["instagram"], c["facebook"]] if u and u != "#"],
               **({"image": SITE_URL.rstrip("/") + "/" + c["photo"]} if c.get("photo") else {})}}
-    page(f"chefs/{c['slug']}/index.html", f"Chef {c['name']}", f"Chef {c['name']}, {c['specialty']} chef in {c['city']}. {c['rate']}. View services and contact the chef directly.", body, active="Find a Chef", noindex=c["sample"] and LANDING_MODE, jsonld=[] if c["sample"] else [person], image=c["photo"] or None)
+    page(f"chefs/{c['slug']}/index.html", f"Chef {c['name']}", f"Chef {c['name']}, {c['specialty']} chef in {c['city']}" + (f", {c['tagline']}" if c['primary_role'] == "Chapter President" and not c['sample'] else "") + (f". {c['rate']}" if c['rate'] else "") + ". View services and contact the chef directly.", body, active="Find a Chef", noindex=c["sample"] and LANDING_MODE, jsonld=[] if c["sample"] else [person], image=c["photo"] or None)
 
 def competitions():
     rows = "".join(f'''<div class="ev-row">
@@ -992,16 +1007,22 @@ LEGAL = {
     ]),
 }
 
-def md_to_html(md):
-    """Small Markdown converter for legal pages: ###/## headings, - lists, **bold**, paragraphs."""
+def md_to_html(md, subheads=False):
+    """Small Markdown converter for legal pages: #/## headings, - and 1. lists, **bold**, links, paragraphs.
+    subheads=True turns short sentence-case bold lines into small subheadings."""
     import re
     def inline(t):
         t = e(t)
-        return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+        t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+        t = re.sub(r"(https?://[^\s<]+[^\s<.,;:)])", r'<a href="\1">\1</a>', t)
+        t = re.sub(r"(?<![\w.@/])([\w.+-]+@[\w-]+\.[\w.]+[a-z])", r'<a href="mailto:\1">\1</a>', t)
+        return t
     out, lst = [], []
+    kind = [None]
     def flush():
         if lst:
-            out.append("<ul>" + "".join(f"<li>{inline(x)}</li>" for x in lst) + "</ul>"); lst.clear()
+            tag = kind[0]
+            out.append(f"<{tag}>" + "".join(f"<li>{inline(x)}</li>" for x in lst) + f"</{tag}>"); lst.clear()
     for line in md.splitlines():
         t = line.strip()
         if not t:
@@ -1010,13 +1031,21 @@ def md_to_html(md):
             flush(); continue  # page title comes from the hero
         if t.startswith("#"):
             flush(); out.append(f"<h2>{inline(t.lstrip('#').strip())}</h2>"); continue
-        if t.startswith("- "):
-            lst.append(t[2:]); continue
+        m = re.match(r"^(\d+)\.\s+(.*)", t)
+        if t.startswith("- ") or m:
+            k = "ol" if m else "ul"
+            if lst and kind[0] != k: flush()
+            kind[0] = k
+            lst.append(m.group(2) if m else t[2:]); continue
         flush()
         if t.startswith("**Effective"):
             out.append(f'<p class="legal-date">{inline(t)}</p>')
         elif t.startswith("**") and t.endswith("**"):
-            out.append(f'<p class="legal-callout">{inline(t)}</p>')
+            inner = t[2:-2]
+            if subheads and inner != inner.upper() and len(inner) < 60:
+                out.append(f'<h3 class="legal-sub">{inline(inner)}</h3>')
+            else:
+                out.append(f'<p class="legal-callout">{inline(t)}</p>')
         else:
             out.append(f"<p>{inline(t)}</p>")
     flush()
@@ -1073,6 +1102,7 @@ def sitemap():
 
 exec(open(Path(__file__).parent / "chefbattle.py", encoding="utf-8").read())
 exec(open(Path(__file__).parent / "chefrelief.py", encoding="utf-8").read())
+exec(open(Path(__file__).parent / "sweepstakes.py", encoding="utf-8").read())
 
 if __name__ == "__main__":
     if LANDING_MODE:
@@ -1084,6 +1114,7 @@ if __name__ == "__main__":
         if EXTRA_PAGES["contact"]: contact()
         chef_battle_pages()
         chef_relief_page()
+        sweepstakes_pages()
     else:
         home(); directory()
         for c in MEMBERS + CHEFS: profile(c)
