@@ -114,6 +114,19 @@ MEMBERS = [
          website="", instagram="", facebook="", booking="",
          photo="assets/img/chefs/matt-neary.jpg", photo_pos="center 20%",
          gallery=[]),
+    dict(slug="steve-ingber", no="03", name="Steve Ingber", sample=False,
+         tagline="Chef & Owner, MileHighCook",
+         city="Denver, Colorado", region="Colorado",
+         primary_role="League Chef", achievements=[], titles=[], chapter="",
+         specialty="Tasting Menus", rate="From $100/person", stat_rate="From $100", area="Mountain West",
+         bio=("I’m Steve Ingber, chef and owner of MileHighCook in Denver. I came to cooking after fifteen years as a marketing executive, trained at the Culinary Institute of America, and cooked in New York kitchens before bringing that cooking into people’s homes and mountain rentals across Colorado, Utah, Arizona and Wyoming. I’ve competed at Taste of Vail and cooked at the Food & Wine Classic in Aspen, and my team has cooked more than 500 dinners, ski weeks, weddings and cooking classes.\n\n"
+              "My food is seasonal and built around where you are: local ranchers, regional farms, Colorado cheesemakers and small bakers I trust. Every menu is written for the people at the table, starting from what they love and what anyone can’t eat. I check every guest’s allergies twice, shop everything myself, serve it restaurant style, and leave the kitchen cleaner than I found it."),
+         services=[("Private dining", "From $150/person"), ("Catering and special events", "From $100/person"), ("Cooking classes", "From $100/person"), ("Corporate events", "From $100/person"), ("Culinary experiences", "From $100/person")],
+         specialties=["Seasonal Colorado Cooking", "Custom Tasting Menus", "Family-Style Dinner Parties", "Wedding & Event Catering", "Hands-On Cooking Classes"],
+         email="steve@milehighcook.net", phone="+15169961202", phone_display="(516) 996-1202",
+         website="https://milehighcook.net", instagram="https://www.instagram.com/themilehighcook/", facebook="https://www.facebook.com/MileHighCook", booking="https://milehighcook.net/contact-us",
+         photo="assets/img/chefs/steve-ingber.jpg", photo_pos="center 20%",
+         gallery=["assets/img/chefs/steve-ingber-1.jpg"]),
 ]
 
 # Which chef is featured in the home hero card
