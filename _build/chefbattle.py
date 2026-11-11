@@ -6,6 +6,7 @@
 
 CB_IMG = "assets/img/chef-battle/"
 OPERATOR_FORM = "https://forms.gle/3E6wzB1EidKPjdC36"
+CB_VIDEO = "DrYVjEJmXxE"  # YouTube video ID on the Chef Battle page
 INTL_OPERATOR_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSfNG9JY7pl4KMQUHPLtv9dJq6WF1TLsnlqdZvOGwcsUd9dACA/viewform?usp=header"
 
 def cb_mail(subject):
@@ -102,6 +103,7 @@ def cb_home():
       <p style="font-size:18px">Chef Battle is a live, head-to-head cooking competition where local chefs go against each other in front of a paying audience. Every event features competing chefs, celebrity judges, a live emcee, and audience tasting. Attendees don't just watch. They eat, vote, and interact throughout.</p>
     </div>
     <div class="cb-pillars">{pil}</div>
+    {cb_video()}
     <div class="cb-mosaic">
       {pic("competing.jpg", "Chef competing live")}{pic("plating.jpg", "Chef plating a dish")}{pic("crowd.jpg", "Chef Battle event crowd")}{pic("judges.jpg", "Judges tasting panel")}
     </div>
@@ -336,6 +338,11 @@ def cb_nationals():
 # ------------------------------------------------------------------
 # /chef-battle/operators/
 # ------------------------------------------------------------------
+def cb_video():
+    return (f'<div class="cb-video"><iframe src="https://www.youtube-nocookie.com/embed/{CB_VIDEO}?rel=0&amp;modestbranding=1&amp;playsinline=1" '
+            'title="Chef Battle video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" '
+            'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>')
+
 def cb_operators():
     how = [("01", "One per market", "One Operator Per City", "We're selecting one approved Chef Battle Local Operator for each market, giving you the exclusive opportunity to lead Chef Battle in your community."),
            ("02", "No event financing", "We Fund Approved Event Expenses", "Hop To It funds the approved event budget so you don't have to finance the event yourself. You focus on execution, not capital."),
@@ -359,7 +366,7 @@ def cb_operators():
   </div>
 </section>
 
-<div class="wrap"><div class="cb-mosaic cb-mosaic--3">{pic("crowd-night.jpg", "Chef Battle crowd")}{pic("competition-floor.jpg", "Chef Battle competition floor")}{pic("judges.jpg", "Judges tasting at Chef Battle")}</div></div>
+<div class="wrap"><div class="eyebrow" style="margin-bottom:16px">See What You'd Bring to Your City</div>{cb_video()}<div class="cb-mosaic cb-mosaic--3">{pic("crowd-night.jpg", "Chef Battle crowd")}{pic("competition-floor.jpg", "Chef Battle competition floor")}{pic("judges.jpg", "Judges tasting at Chef Battle")}</div></div>
 
 <section class="section" id="partnership">
   <div class="wrap">
@@ -402,10 +409,10 @@ def cb_operators():
 
 def cb_operators_intl():
     how = [("01", "One per city", "Exclusive Territory", "We're selecting one approved Chef Battle International Operator per market. You become the person leading Chef Battle in your community."),
-           ("02", "Your investment", "You Fund Your Market", "As an International Operator, you fund approved event expenses and manage local event finances. You keep more control, and take more ownership, of your market."),
+           ("02", "No event financing", "We Fund Approved Event Expenses", "Hop To It funds the approved event budget so you don't have to finance the event yourself. You focus on execution, not capital."),
            ("03", "Your role", "You Lead and Market Locally", "You use your knowledge and relationships to recruit chefs, connect with venues, build sponsorships, promote the event and drive ticket sales."),
-           ("04", "Your upside", "You Share in the Profit", "International Operators receive 60% of final Event Profit from the Chef Battle events they operate. Hop To It retains 40%.")]
-    T = [("60%", "Of event profit you earn"), ("1", "Approved operator per city"), ("$999 USD", "Annual operator fee*"), ("You fund", "Approved event expenses")]
+           ("04", "Your upside", "Earn 30% of Event Profit", "Hop To It manages event revenue and approved expenses. You receive 30% of the final Event Profit from every Chef Battle event you operate.")]
+    T = [("30%", "Of event profit you earn"), ("1", "Approved operator per city"), ("$149 USD", "Annual operator fee*"), ("$0", "Event expenses out of pocket")]
     body = f'''
 {cb_hero("Chef Battle · International Operator Program",
          'Bring Chef Battle<br>to Your City<span class="dot">.</span>',
@@ -424,8 +431,8 @@ def cb_operators_intl():
 <section class="section bg-bone">
   <div class="wrap">
     <div class="cb-two">
-      <div class="cb-col"><div class="eyebrow">Your Role · What You Bring</div>{ticklist(["Local market knowledge and relationships", "Event funding and financial management", "Chef and restaurant recruitment", "Local sponsorship and partnership development", "Local marketing and ticket sales", "Event-day leadership and execution"])}</div>
-      <div class="cb-col cb-col--navy"><div class="eyebrow">Our Role · What We Provide</div>{ticklist(["The Chef Battle brand and competition format", "Operator onboarding and support", "Event planning resources and templates", "Brand and creative resources", "Sponsorship materials", "Ticketing infrastructure", "Event standards and operating framework", "Ongoing support from planning through event day"])}</div>
+      <div class="cb-col"><div class="eyebrow">Your Role · What You Bring</div>{ticklist(["Local market knowledge and relationships", "Chef and restaurant recruitment", "Local sponsorship and partnership development", "Local marketing and ticket sales", "Event-day leadership and execution"])}</div>
+      <div class="cb-col cb-col--navy"><div class="eyebrow">Our Role · What We Provide</div>{ticklist(["The Chef Battle brand and competition format", "Operator onboarding and support", "Event planning resources and templates", "Brand and creative resources", "Sponsorship materials", "Ticketing infrastructure", "Approved event funding", "Financial reconciliation and profit-sharing", "Ongoing support from planning through event day"])}</div>
     </div>
   </div>
 </section>
@@ -452,7 +459,7 @@ def cb_operators_intl():
 <section class="section--band">
   <div class="wrap">
     <div class="eyebrow" style="margin-bottom:20px">The Terms</div>
-    {terms(T + [("Opportunity", "To grow with Hop To It")], "There are no guaranteed earnings. Your compensation is based on the actual financial performance of your event. *$999 USD annual license fee is per approved market. All market territories, geographic boundaries and regional limits are defined by Chef Battle.")}
+    {terms(T + [("Opportunity", "To grow with Hop To It")], "There are no guaranteed earnings. Your compensation is based on the actual financial performance of your event. *$149 USD annual operator fee is per approved market. All market territories, geographic boundaries and regional limits are defined by Chef Battle.")}
   </div>
 </section>
 
@@ -465,7 +472,7 @@ def cb_operators_intl():
   </div>
 </section>'''
     page("chef-battle/operators/international/index.html", "Chef Battle International Operator Program",
-         "Bring Chef Battle to your city outside the US. Exclusive territory, 60% of event profit, $999 USD per year.",
+         "Bring Chef Battle to your city outside the US. One operator per market, $149 USD/year, approved event expenses funded, and 30% of event profit.",
          body, active="Operators", image="assets/img/share/share-chef-battle.jpg", crumbs=[("Home", ""), ("Chef Battle", "chef-battle/"), ("Operators", "chef-battle/operators/"), ("International", "chef-battle/operators/international/")])
 
 # ------------------------------------------------------------------
