@@ -6,6 +6,9 @@
 
 CR_IMG = "assets/img/chef-relief/"
 DONATE_LINK = None          # e.g. a Stripe donation link. None = "Donate" emails us instead.
+# Stripe Buy Button for donations (shown in the "Give" card). None = use DONATE_LINK / email instead.
+DONATE_BUY_BUTTON = dict(id="buy_btn_1UalnWPRRwNAyIGzw8nXer6M",
+                         key="pk_live_51UEYQKPRRwNAyIGzipTN7dfdn1gcH22Fxtrt8Ig0woxAGpA4zIZCxpFgSFtTsfdemFDQkIfvFmj7MADT8Y9HYEM200MdG77VF2")
 ASSIST_LINK = None          # e.g. a Google Form for assistance requests. None = email.
 
 def chef_relief_page():
@@ -13,6 +16,12 @@ def chef_relief_page():
     def mail(subject):
         return f"mailto:{CONTACT_EMAIL}?subject={quote(subject)}"
     donate = DONATE_LINK or mail("Chef Relief donation")
+    if DONATE_BUY_BUTTON:
+        give = ('<div class="cr-buy"><script async src="https://js.stripe.com/v3/buy-button.js"></script>'
+                f'<stripe-buy-button buy-button-id="{DONATE_BUY_BUTTON["id"]}" publishable-key="{DONATE_BUY_BUTTON["key"]}"></stripe-buy-button>'
+                f'<noscript>{btn("Donate to Chef Relief", donate, "inverse", "lg")}</noscript></div>')
+    else:
+        give = btn("Donate to Chef Relief", donate, "inverse", "lg")
     assist = ASSIST_LINK or mail("Chef Relief assistance request")
     helps = [("Emergency financial assistance", "Direct support for chefs hit by an unexpected hardship, when they need it most."),
              ("Essential expenses covered", "Help with the essential costs that can't wait while a chef gets back on their feet."),
@@ -72,7 +81,7 @@ def chef_relief_page():
       <div class="cr-way cr-way--red">
         <div class="t">Give</div>
         <p>Every contribution goes toward helping a chef cover essential expenses during a hard moment.</p>
-        {btn("Donate to Chef Relief", donate, "inverse", "lg")}
+        {give}
       </div>
       <div class="cr-way">
         <div class="t">Partner</div>
